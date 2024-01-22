@@ -1,5 +1,18 @@
+const db = require("../config/db");
+
 const getList = (req, res) => {
-  res.send("You have Request list user");
+  db.query("SELECT * FROM role;", (error, row) => {
+    if (error) {
+      res.json({
+        error: true,
+        message: error,
+      });
+    } else {
+      res.json({
+        list: row,
+      });
+    }
+  });
 };
 const create = (req, res) => {
   res.send("Your have Request Create User");
