@@ -1,15 +1,14 @@
-const express = require("express");
+const express = require(`express`);
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("Hello Express is Node js");
+  res.send("Hello world");
 });
-
+const port = 8081;
 const user = require("./src/route/user.route");
 user(app);
-
-
-const port = 8081;
+const customer = require("./src/route/customer.route");
+customer(app);
 app.listen(port, () => {
   console.log("http://localhost:" + port);
 });
