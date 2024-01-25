@@ -1,0 +1,8 @@
+[2024-01-25 22:11:28]  Error: connect ECONNREFUSED ::1:3306
+
+[2024-01-25 22:11:50]  Error: connect ECONNREFUSED ::1:3306
+
+[2024-01-25 22:11:52]  Error: connect ECONNREFUSED ::1:3306
+
+[2024-01-25 22:12:16]  Error: Table 'full_stack.role1' doesn't exist
+

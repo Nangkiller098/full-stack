@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { logError } = require("../config/helper");
 
 // const getList = (req, res) => {
 //   db.query("SELECT * FROM role;", (error, row) => {
@@ -16,12 +17,12 @@ const db = require("../config/db");
 // };
 const getList = async (req, res) => {
   try {
-    const [list] = await db.query("SELECT * FROM role where Id=:Id", { Id: 1 });
+    const [list] = await db.query("SELECT * FROM role");
     res.json({
       list: list,
     });
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    logError("user.getlist", err, res);
   }
 };
 
@@ -61,8 +62,7 @@ const update = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
-    console.log(error);
+    logError("user.update", error, res);
   }
 };
 const remove = async (req, res) => {
@@ -79,6 +79,7 @@ const remove = async (req, res) => {
   } catch (error) {
     res.status(500).send("Internal Server Error");
     console.log(error);
+    ``;
   }
 };
 module.exports = { getList, create, update, remove };
