@@ -1,0 +1,122 @@
+===== Database Design ======
+
+Computer Shop
+
+Customer
+    Id(PK)
+    Firstname
+    Lastname
+    Gender
+    Dob
+    Tel 
+    Email
+    Adress
+    Status 
+    CreateAt
+    
+Role
+    Id(PK)
+    Name
+    Code
+    Status
+    CreateAt
+
+Employee
+    Id(PK)
+    RoleId(FK)
+    NID
+    Firstname
+    Lastname
+    Gender
+    Dob
+    Tel
+    Email
+    Image
+    Salary
+    Address
+    Status
+    CreateAt
+
+category
+    Id(PK)
+    Name
+    Description
+    Status
+    CreateAt
+
+supplier
+    Id(PK)
+    Name 
+    Tel 
+    Email
+    Address
+    Website
+    CreateBy
+    CreateAt
+
+purchas
+    Id(PK)
+    EmployeeId(PK)
+    SupplierId()
+    Status | ""
+    CreateAt
+
+purchas_product 
+    Id(PK)
+    PurchaseId(FK)
+    ProductId(FK)
+    Qty 
+    Price
+    ProductStatus // ""
+
+product
+    Id(PK)
+    CategoryId(FK)
+    Name
+    Description
+    Qty
+    Price
+    Image
+    Status
+    CreateAt
+
+product_image
+    Id(PK)
+    ProductId(FK)
+    Image 
+    Status
+
+invoice
+    Id(PK)
+    CustomerId(FK)
+    EmployeeId(FK)
+    OrderStatusId(FK)
+    OrderPaymentMethodId(FK)
+    TotalQty
+    TotalAmount
+    TotalPaid 
+    Status 
+    CreateAt 
+    
+invoice_details
+    Id(PK)
+    InvoiceId(FK)
+    ProductId(FK)
+    Qty 
+    Price 
+
+order_status
+    Id(PK)
+    Name
+    Code
+    Status
+    CreatAt 
+    
+order_payment_method
+    Id(PK)
+    Name
+    Code
+    Status
+    CreatAt 
+
+-- report
