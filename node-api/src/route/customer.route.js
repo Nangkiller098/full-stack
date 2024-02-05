@@ -1,8 +1,9 @@
-const customer_controller = require(`../controller/customer.controller`);
+const controller = require("../controller/customer_controller");
 const customer = (app) => {
-  app.get(`/api/customer/list`, customer_controller.getList);
-  app.get(`/api/customer/create`, customer_controller.create);
-  app.get(`/api/customer/update`, customer_controller.update);
-  app.get(`/api/customer/delete`, customer_controller.remove);
+  app.get("/api/customer/getlist", controller.getlist);
+  app.post("/api/customer/create", controller.create);
+  app.put("/api/customer/update", controller.update);
+  app.delete("/api/customer/delete", controller.remove);
 };
+
 module.exports = customer;
