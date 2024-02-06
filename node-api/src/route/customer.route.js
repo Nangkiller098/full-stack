@@ -1,4 +1,4 @@
-const controller = require("../controller/customer_controller");
+const controller = require("../controller/customer.controller");
 const customer = (app) => {
   app.get("/api/customer/getlist", controller.getlist);
   app.post("/api/customer/create", controller.create);
