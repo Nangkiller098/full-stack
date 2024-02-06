@@ -4,6 +4,10 @@ const order_payment_method = (app) => {
     `/api/order_payment_method/list`,
     order_payment_method_controller.getList
   );
+  app.get(
+    `/api/order_payment_method/getone`,
+    order_payment_method_controller.getById
+  );
   app.post(
     `/api/order_payment_method/create`,
     order_payment_method_controller.create

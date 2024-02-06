@@ -11,6 +11,20 @@ const getlist = async (req, res) => {
     logError("customer.getlist", err, res);
   }
 };
+const getById = async (req, res) => {
+  try {
+    var param = {
+      Id: req.body.Id,
+    };
+    var sql = "SELECT * FROM customer WHERE Id=:Id";
+    const data = await db.query(sql, param);
+    res.json({
+      data: data,
+    });
+  } catch (error) {
+    logError("category.getList", error, res);
+  }
+};
 
 const create = async (req, res) => {
   try {
@@ -81,4 +95,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { getlist, create, update, remove };
+module.exports = { getlist, create, update, remove, getById };

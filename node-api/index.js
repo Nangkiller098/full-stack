@@ -24,6 +24,9 @@ order_status(app);
 const employee = require("./src/route/employee.route");
 employee(app);
 
+// const product = require("./src/route/product.route");
+// product(app);
+
 const port = 8081;
 app.listen(port, () => {
   console.log("http://localhost:" + port);
