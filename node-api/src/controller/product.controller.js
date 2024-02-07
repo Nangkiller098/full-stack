@@ -27,17 +27,23 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
+  // CategoryId,Name ,Description, Qty, Price, Discount, Image, Status
   try {
-    var { Name, Description, Qty, Price, Discount, Image, Status } = req.body;
-    var message = {};
-    if (validation(Name)) {
+    var { Name, Description, Qty, Price, Discount, Status } = req.body;
+    var Image = null;
+    if (req.file) {
+      Image = req.file.filename;
+    }
+    var message = {}; // empty object
+    if (isEmptyOrNull(Name)) {
       message.Name = "Name required!";
-    } else if (validation(Qty)) {
+    }
+    if (isEmptyOrNull(Qty)) {
       message.Qty = "Qty required!";
-    } else if (validation(Price)) {
+    }
+    if (isEmptyOrNull(Price)) {
       message.Price = "Price required!";
     }
-
     if (Object.keys(message).length > 0) {
       res.json({
         error: true,
@@ -45,6 +51,8 @@ const create = async (req, res) => {
       });
       return false;
     }
+    var sql =
+      "INSERT INTO product (CategoryId, Name ,Description, Qty, Price, Discount, Image, Status) VALUES (:CategoryId, :Name, :Description, :Qty, :Price, :Discount, :Image, :Status)";
     var param = {
       Name,
       Description,
@@ -54,15 +62,12 @@ const create = async (req, res) => {
       Image,
       Status,
     };
-    var sql = `INSERT INTO product(CategoryId, Name,Description, Qty, Price, Discount, Image, Status)
-     VALUES(:CategoryId,:Name, :Description, :Qty, :Price, :Discount, :Image, :Status) `;
     const [data] = await db.query(sql, param);
     res.json({
-      message: "Insert success",
       data: data,
     });
-  } catch (error) {
-    logError("product.create", error, res);
+  } catch (err) {
+    logError("product.create", err, res);
   }
 };
 
