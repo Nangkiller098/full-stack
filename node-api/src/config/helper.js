@@ -17,4 +17,11 @@ const logError = async (
   }
   res.status(500).send("Internal Server Error");
 };
-module.exports = { logError };
+const validation = (value) => {
+  if (value == "" || value == null || value == undefined) {
+    return true;
+  }
+  return false;
+};
+
+module.exports = { logError, validation };
