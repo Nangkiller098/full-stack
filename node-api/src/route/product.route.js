@@ -8,7 +8,11 @@ const product = (app) => {
     upload.single("Image"),
     product_controller.create
   );
-  app.put("/api/product/update", product_controller.update);
+  app.put(
+    "/api/product/update",
+    upload.single("Image"),
+    product_controller.update
+  );
   app.delete("/api/product/delete", product_controller.remove);
 };
 module.exports = product;

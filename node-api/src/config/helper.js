@@ -56,6 +56,16 @@ const upload = multer({
     }
   },
 });
+const removeFile = async (fileName) => {
+  var filePath = "C:/xampp/htdocs/fullstack/image_g7/";
+  try {
+    await fs.unlink(filePath + fileName);
+    return "File delete successfully";
+  } catch (err) {
+    console.error("Error deleting file:", err);
+    throw err;
+  }
+};
 
 // const myupload=multer({
 //   storage:,
@@ -63,4 +73,4 @@ const upload = multer({
 //   fileFilter:,
 // })
 
-module.exports = { logError, validation, upload };
+module.exports = { logError, validation, upload, removeFile };

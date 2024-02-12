@@ -1,4 +1,4 @@
-const { logError, validation } = require("../config/helper");
+const { logError, validation, removeFile } = require("../config/helper");
 const db = require("../config/db");
 
 const getList = async (req, res) => {
@@ -27,44 +27,48 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  // CategoryId,Name ,Description, Qty, Price, Discount, Image, Status
   try {
-    var { Name, Description, Qty, Price, Discount, Status } = req.body;
+    var { Name, Qty, Price, Image } = req.body;
+
     var Image = null;
     if (req.file) {
       Image = req.file.filename;
     }
-    var message = {}; // empty object
+
+    var message = {};
     if (validation(Name)) {
-      message.Name = "Name required!";
+      message.Name = "Name is require.";
     }
     if (validation(Qty)) {
-      message.Qty = "Qty required!";
+      message.Qty = "Qty is require.";
     }
     if (validation(Price)) {
-      message.Price = "Price required!";
+      message.Price = "Price is require.";
     }
-    if (Object.keys(message).length > 0) {
-      res.json({
+
+    if (Object.keys(message).length)
+      return res.json({
         error: true,
-        message: message,
+        message,
       });
-      return false;
-    }
-    var sql =
-      "INSERT INTO product (CategoryId, Name ,Description, Qty, Price, Discount, Image, Status) VALUES (:CategoryId, :Name, :Description, :Qty, :Price, :Discount, :Image, :Status)";
+
+    var sql = `INSERT INTO product
+          (Name, CategoryId, Description, Qty, Price, Discount, Image, Status)
+          VALUES (:Name, :CategoryId, :Description, :Qty, :Price, :Discount, :Image, :Status)`;
     var param = {
-      Name,
-      Description,
-      Qty,
-      Price,
-      Discount,
-      Image,
-      Status,
+      Name: req.body.Name,
+      CategoryId: req.body.CategoryId,
+      Description: req.body.Description,
+      Qty: req.body.Qty,
+      Price: req.body.Price,
+      Discount: req.body.Discount,
+      Image: Image,
+      Status: req.body.Status,
     };
     const [data] = await db.query(sql, param);
     res.json({
-      data: data,
+      message: "Create successfully",
+      data,
     });
   } catch (err) {
     logError("product.create", err, res);
@@ -73,63 +77,71 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    var { Id, Name, Description, Qty, Price, Discount, Status } = req.body;
+    var { Id, Name, Qty, Price, Image } = req.body;
+
     var Image = null;
     if (req.file) {
       Image = req.file.filename; // change image | new image
     } else {
-      Image = req.body.Image; // get Old image
+      Image = req.body.Image; // get old image
     }
-    var message = {}; // empty object
-    if (isEmptyOrNull(Id)) {
-      message.Id = "Id required!";
+
+    var message = {};
+    if (validation(Id)) {
+      message.Id = "Id is require.";
     }
-    if (isEmptyOrNull(Name)) {
-      message.Name = "Name required!";
+    if (validation(Name)) {
+      message.Name = "Name is require.";
     }
-    if (isEmptyOrNull(Qty)) {
-      message.Qty = "Qty required!";
+    if (validation(Qty)) {
+      message.Qty = "Qty is require.";
     }
-    if (isEmptyOrNull(Price)) {
-      message.Price = "Price required!";
+    if (validation(Price)) {
+      message.Price = "Price is require.";
     }
-    if (Object.keys(message).length > 0) {
-      res.json({
+
+    if (Object.keys(message).length)
+      return res.json({
         error: true,
-        message: message,
+        message,
       });
-      return false;
-    }
+
     var param = {
-      Id,
-      Name,
-      Description,
-      Qty,
-      Price,
-      Discount,
-      Status,
-      Image,
+      Id: req.body.Id,
+      Name: req.body.Name,
+      CategoryId: req.body.CategoryId,
+      Description: req.body.Description,
+      Qty: req.body.Qty,
+      Price: req.body.Price,
+      Discount: req.body.Discount,
+      Image: Image,
+      Status: req.body.Status,
     };
-    const [dataInfo] = await db.query("SELECT * FROM product WHERE Id=:Id", {
+
+    const [dataInfo] = await db.query("SELECT * FROM product WHERE Id = :Id", {
       Id: Id,
     });
-    if (dataInfo.length > 0) {
-      var sql =
-        "UPDATE product SET CategoryId=:CategoryId, Name=:Name ,Description=:Description, Qty=:Qty, Price=:Price, Discount=:Discount, Image=:Image, Status=:Image WHERE Id = :Id";
+    if (dataInfo.length) {
+      // TODO: Update
+      var sql = `UPDATE product
+              SET Name = :Name, CategoryId = :CategoryId, Description = :Description, Qty = :Qty, Price = :Price, Discount = :Discount, Image = :Image, Status = :Status
+              WHERE Id = :Id`;
       const [data] = await db.query(sql, param);
+
       if (data.affectedRows) {
-        if (req.file && !isEmptyOrNull(req.body.Image)) {
-          await removeFile(req.body.Image); // remove old file
+        if (req.file && !validation(req.body.Image)) {
+          // TODO: Remove old file from dir
+          await removeFile(req.body.Image);
         }
       }
       res.json({
-        message: data.affectedRows != 0 ? "Update success" : "Not found",
-        data: data,
+        message: data.affectedRows != 0 ? "Update successfully" : "Not found",
+        data,
       });
     } else {
       res.json({
-        message: "Not found",
         error: true,
+        message: "Not found",
       });
     }
   } catch (err) {
@@ -141,17 +153,18 @@ const remove = async (req, res) => {
     var param = {
       Id: req.body.Id,
     };
+    // TODO: find product
     const [dataInfo] = await db.query(
       "SELECT * FROM product WHERE Id = :Id",
       param
     );
-    if (dataInfo.length) {
+    if (dataInfo.length > 0) {
       // TODO: delete
       var sql = "DELETE FROM product WHERE Id = :Id";
       const [data] = await db.query(sql, param);
 
       if (data.affectedRows) {
-        if (!isEmptyOrNull(dataInfo[0].Image)) {
+        if (!validation(dataInfo[0].Image)) {
           // TODO: else unlink|remove file
           await removeFile(dataInfo[0].Image);
         }
