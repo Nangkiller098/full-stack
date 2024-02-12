@@ -33,7 +33,7 @@ const upload = multer({
   storage: multer.diskStorage({
     //image path
     destination: function (req, file, callback) {
-      callback(null, Config.image_path);
+      callback(null, "C:/xampp/htdocs/fullstack/image_g7");
     },
     filename: function (req, file, callback) {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -41,7 +41,7 @@ const upload = multer({
     },
   }),
   limits: {
-    fileSize: 1024 * 1024 * 3, //max 3MB
+    fileSize: 1024 * 1024 * 100, //max 3MB
   },
   fileFilter: function (req, file, callback) {
     if (

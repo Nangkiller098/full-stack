@@ -5,7 +5,7 @@ const product = (app) => {
   app.get("/api/product/getById", product_controller.getById);
   app.post(
     "/api/product/create",
-    upload.single("image"),
+    upload.single("Image"),
     product_controller.create
   );
   app.put("/api/product/update", product_controller.update);

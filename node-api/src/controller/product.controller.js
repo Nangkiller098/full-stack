@@ -35,13 +35,13 @@ const create = async (req, res) => {
       Image = req.file.filename;
     }
     var message = {}; // empty object
-    if (isEmptyOrNull(Name)) {
+    if (validation(Name)) {
       message.Name = "Name required!";
     }
-    if (isEmptyOrNull(Qty)) {
+    if (validation(Qty)) {
       message.Qty = "Qty required!";
     }
-    if (isEmptyOrNull(Price)) {
+    if (validation(Price)) {
       message.Price = "Price required!";
     }
     if (Object.keys(message).length > 0) {
@@ -73,26 +73,26 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    var {
-      Id,
-      CategoryId,
-      Name,
-      Description,
-      Qty,
-      Price,
-      Discount,
-      Image,
-      Status,
-    } = req.body;
-    var message = {};
-    if (validation(Name)) {
+    var { Id, Name, Description, Qty, Price, Discount, Status } = req.body;
+    var Image = null;
+    if (req.file) {
+      Image = req.file.filename; // change image | new image
+    } else {
+      Image = req.body.Image; // get Old image
+    }
+    var message = {}; // empty object
+    if (isEmptyOrNull(Id)) {
+      message.Id = "Id required!";
+    }
+    if (isEmptyOrNull(Name)) {
       message.Name = "Name required!";
-    } else if (validation(Qty)) {
+    }
+    if (isEmptyOrNull(Qty)) {
       message.Qty = "Qty required!";
-    } else if (validation(Price)) {
+    }
+    if (isEmptyOrNull(Price)) {
       message.Price = "Price required!";
     }
-
     if (Object.keys(message).length > 0) {
       res.json({
         error: true,
@@ -100,42 +100,74 @@ const update = async (req, res) => {
       });
       return false;
     }
-    var sql =
-      "UPDATE product SET CategoryId=:CategoryId, Name=:Name,Description=:Description, Qty=:Qty, Price=:Price, Discount=:Discount, Image=:Image, Status=:Status WHERE Id=:Id";
     var param = {
       Id,
-      CategoryId,
       Name,
       Description,
       Qty,
       Price,
       Discount,
-      Image,
       Status,
+      Image,
     };
-    const [data] = await db.query(sql, param);
-    res.json({
-      message: data.affectedRows != 0 ? "Update success" : "Not Found",
-      data: data,
+    const [dataInfo] = await db.query("SELECT * FROM product WHERE Id=:Id", {
+      Id: Id,
     });
-  } catch (error) {
-    logError("product.update", error, res);
+    if (dataInfo.length > 0) {
+      var sql =
+        "UPDATE product SET CategoryId=:CategoryId, Name=:Name ,Description=:Description, Qty=:Qty, Price=:Price, Discount=:Discount, Image=:Image, Status=:Image WHERE Id = :Id";
+      const [data] = await db.query(sql, param);
+      if (data.affectedRows) {
+        if (req.file && !isEmptyOrNull(req.body.Image)) {
+          await removeFile(req.body.Image); // remove old file
+        }
+      }
+      res.json({
+        message: data.affectedRows != 0 ? "Update success" : "Not found",
+        data: data,
+      });
+    } else {
+      res.json({
+        message: "Not found",
+        error: true,
+      });
+    }
+  } catch (err) {
+    logError("product.update", err, res);
   }
 };
-
 const remove = async (req, res) => {
   try {
-    var sql = "DELETE FROM product WHERE Id= :Id";
     var param = {
       Id: req.body.Id,
     };
-    const [data] = await db.query(sql, param);
-    res.json({
-      message: "Remove success",
-      data: data,
-    });
-  } catch (error) {
-    logError("product.remove", error, res);
+    const [dataInfo] = await db.query(
+      "SELECT * FROM product WHERE Id = :Id",
+      param
+    );
+    if (dataInfo.length) {
+      // TODO: delete
+      var sql = "DELETE FROM product WHERE Id = :Id";
+      const [data] = await db.query(sql, param);
+
+      if (data.affectedRows) {
+        if (!isEmptyOrNull(dataInfo[0].Image)) {
+          // TODO: else unlink|remove file
+          await removeFile(dataInfo[0].Image);
+        }
+      }
+      res.json({
+        message: data.affectedRows != 0 ? "Delete successfully" : "Not found",
+        data,
+      });
+    } else {
+      res.json({
+        error: true,
+        message: "Not found",
+      });
+    }
+  } catch (err) {
+    logError("product.remove", err, res);
   }
 };
 module.exports = { getList, create, update, remove, getById };
