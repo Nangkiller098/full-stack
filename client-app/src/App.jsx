@@ -1,14 +1,23 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Homepage from "./page/Homepage";
+import LoginPage from "./page/LoginPage";
+import RegisterPage from "./page/RegisterPage";
+import RouteNotFoundPage from "./page/RouteNotFoundPage";
+import MainLayout from "./components/layout/MainLayout";
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <h1 className="text-3xl font-bold text-cyan-500">Hello world!</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="*" element={<RouteNotFoundPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
