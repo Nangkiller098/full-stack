@@ -1,0 +1,2 @@
+[2024-02-13 13:56:36]  Error: Unknown column 'Name' in 'field list'
+

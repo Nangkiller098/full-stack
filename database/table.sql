@@ -6,7 +6,7 @@ CREATE TABLE `category` (
   `Description` text DEFAULT NULL,
   `Status` tinyint(1) DEFAULT 1,
   `CreateAt` timestamp NOT NULL DEFAULT current_timestamp()
-)
+);
 
 CREATE TABLE `role` (
   `Id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -14,7 +14,7 @@ CREATE TABLE `role` (
   `code` varchar(120) NOT NULL UNIQUE,
   `Status` tinyint(1) DEFAULT 1,
   `CreateAt` timestamp NOT NULL DEFAULT current_timestamp()
-)
+);
 
 CREATE TABLE `customer` (
   `Id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -24,7 +24,7 @@ CREATE TABLE `customer` (
   `Dob` datetime DEFAULT NULL,
   `Tel` varchar(120) NOT NULL,
   `Email` varchar(120) DEFAULT NULL,
-  `Addres` text DEFAULT NULL,
+  `Addresss` text DEFAULT NULL,
   `Status` tinyint(1) DEFAULT 1,
   `CreateAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `CreateBy` int(11) DEFAULT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `employee` (
   `Dob` datetime DEFAULT NULL,
   `Tel` varchar(120) NOT NULL,
   `Email` varchar(120) DEFAULT NULL,
-  `Addres` text DEFAULT NULL,
+  `Addresss` text DEFAULT NULL,
   `Status` tinyint(1) DEFAULT 1,
   `Image` varchar(255) DEFAULT NULL,
   `Salary` DECIMAL(6,2) DEFAULT 0,
@@ -57,7 +57,7 @@ CREATE TABLE `supplier` (
   `Name` varchar(120) NOT NULL,
   `Tel` varchar(120) NOT NULL,
   `Email` varchar(120) NOT NULL,
-  `Addres` text NOT NULL,
+  `Addresss` text NOT NULL,
   `WebsiteUrl` text DEFAULT NULL,
   `Status` tinyint(1) DEFAULT 1,
   `CreateAt` timestamp NOT NULL DEFAULT current_timestamp(),

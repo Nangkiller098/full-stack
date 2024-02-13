@@ -10,7 +10,7 @@ const product = (app) => {
   );
   app.put(
     "/api/product/update",
-    upload.single("Image"),
+    upload.single("image"),
     product_controller.update
   );
   app.delete("/api/product/delete", product_controller.remove);

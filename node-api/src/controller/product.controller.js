@@ -28,7 +28,8 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    var { Name, Qty, Price, Image } = req.body;
+    var { Name, CategoryId, Description, Qty, Price, Discount, Status } =
+      req.body;
 
     var Image = null;
     if (req.file) {
@@ -56,14 +57,14 @@ const create = async (req, res) => {
           (Name, CategoryId, Description, Qty, Price, Discount, Image, Status)
           VALUES (:Name, :CategoryId, :Description, :Qty, :Price, :Discount, :Image, :Status)`;
     var param = {
-      Name: req.body.Name,
-      CategoryId: req.body.CategoryId,
-      Description: req.body.Description,
-      Qty: req.body.Qty,
-      Price: req.body.Price,
-      Discount: req.body.Discount,
-      Image: Image,
-      Status: req.body.Status,
+      Name,
+      CategoryId,
+      Description,
+      Qty,
+      Price,
+      Image,
+      Discount,
+      Status,
     };
     const [data] = await db.query(sql, param);
     res.json({
@@ -77,13 +78,13 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    var { Id, Name, Qty, Price, Image } = req.body;
+    var { Id, Name, Description, Qty, Price, Discount, Status } = req.body;
 
     var Image = null;
     if (req.file) {
       Image = req.file.filename; // change image | new image
     } else {
-      Image = req.body.Image; // get old image
+      Image = req.Image; // get old image
     }
 
     var message = {};
@@ -107,15 +108,14 @@ const update = async (req, res) => {
       });
 
     var param = {
-      Id: req.body.Id,
-      Name: req.body.Name,
-      CategoryId: req.body.CategoryId,
-      Description: req.body.Description,
-      Qty: req.body.Qty,
-      Price: req.body.Price,
-      Discount: req.body.Discount,
-      Image: Image,
-      Status: req.body.Status,
+      Id,
+      Name,
+      Description,
+      Qty,
+      Price,
+      Discount,
+      Image,
+      Status,
     };
 
     const [dataInfo] = await db.query("SELECT * FROM product WHERE Id = :Id", {
@@ -124,7 +124,7 @@ const update = async (req, res) => {
     if (dataInfo.length) {
       // TODO: Update
       var sql = `UPDATE product
-              SET Name = :Name, CategoryId = :CategoryId, Description = :Description, Qty = :Qty, Price = :Price, Discount = :Discount, Image = :Image, Status = :Status
+              SET Name = :Name, Description = :Description, Qty = :Qty, Price = :Price, Discount = :Discount, Image = :Image, Status = :Status
               WHERE Id = :Id`;
       const [data] = await db.query(sql, param);
 

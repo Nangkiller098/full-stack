@@ -33,7 +33,7 @@ const upload = multer({
   storage: multer.diskStorage({
     //image path
     destination: function (req, file, callback) {
-      callback(null, "C:/xampp/htdocs/fullstack/image_g7");
+      callback(null, "C:/xampp/htdocs/fullstack/image_g7/");
     },
     filename: function (req, file, callback) {
       const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
