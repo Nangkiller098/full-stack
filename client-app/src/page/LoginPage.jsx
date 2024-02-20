@@ -38,9 +38,7 @@ const LoginPage = () => {
   return (
     <div
       style={{
-        marginTop: 20,
         backgroundColor: "pink",
-        padding: 20,
       }}
     >
       <input onChange={onChangeUsername} placeholder="username" />

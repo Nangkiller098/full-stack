@@ -1,18 +1,9 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
+import { NavbarSimple } from "./NavbarWithSearch";
 const MainLayout = () => {
-  const navigate = useNavigate();
-  const onClickHome = () => {
-    navigate("");
-  };
-  const onCLickLogin = () => {
-    navigate("login");
-  };
-  const onClickRegister = () => {
-    navigate("register");
-  };
   const fullname = localStorage.getItem("fullname");
   return (
-    <div>
+    <>
       <div>
         <div>Brand Name</div>
         <div>User Login:{fullname}</div>
@@ -27,11 +18,12 @@ const MainLayout = () => {
             <button>Register</button>
           </Link>
         </div>
+        <NavbarSimple />
         <div>
           <Outlet />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
