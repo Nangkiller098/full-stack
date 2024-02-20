@@ -1,33 +1,22 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { request } from "../config/request";
 const HomePage = () => {
   const [list, setList] = useState([]);
   const [message, setMessage] = useState("");
   const [role, setRole] = useState("");
-  const [a, setA] = useState(undefined);
 
   useEffect(() => {
     getListCategory();
   }, []);
 
-  const getListCategory = () => {
-    axios({
-      url: "http://localhost:8081/api/customer/getlist",
-      method: "get",
-      data: {
-        // Fistname:"Dara",
-        // Gender:"Dara",
-      },
-    })
-      .then((res) => {
-        console.log(res.data);
-        setList(res.data.list);
-        setMessage(res.data.message);
-        setRole(res.data.role); //
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const getListCategory = async () => {
+    const res = await request("customer/getlist", "GET", {});
+    if (res) {
+      setList(res.list);
+      setMessage("Data has been Get");
+      setRole("");
+    }
+    console.log(res);
   };
 
   return (
@@ -36,8 +25,6 @@ const HomePage = () => {
       <h1>message : {message}</h1>
       <h1>role : {role + ""}</h1>
       <h1>List : {list.length}</h1>
-      {a && <h1>a : {a.name}</h1>}
-      <h1>a : {a?.name}</h1>
       {list.length > 0 && (
         <h1>
           Username : {list[0].Firstname}-{list[0].Lastname}
@@ -45,7 +32,7 @@ const HomePage = () => {
       )}
       <div>
         {list.map((item, index) => (
-          <>
+          <div key={item.Id}>
             <div
               style={{ padding: 10, backgroundColor: "green", marginTop: 10 }}
             >
@@ -56,7 +43,7 @@ const HomePage = () => {
               <div>Contact : {item.Tel}</div>
               <div>Email : {item.Email}</div>
             </div>
-          </>
+          </div>
         ))}
       </div>
     </div>
