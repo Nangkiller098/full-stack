@@ -12,9 +12,17 @@ function App() {
         <Routes>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Homepage />} />
+            <Route path="/customer" element={<h1>customer</h1>} />
+            <Route path="/employee" element={<h1>employee</h1>} />
+            <Route path="/product" element={<h1>product</h1>} />
+            <Route path="/category" element={<h1>category</h1>} />
+            <Route path="*" element={<RouteNotFoundPage />} />
+          </Route>
+
+          <Route element={<MainLayout />}>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="*" element={<RouteNotFoundPage />} />
+            <Route path="*" element={<LoginPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

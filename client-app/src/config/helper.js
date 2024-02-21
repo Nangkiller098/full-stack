@@ -6,5 +6,35 @@ export const Config = {
 };
 
 export const getUser = () => {
-  return localStorage.getItem("fullname");
+  var user = localStorage.getItem("profile");
+  if (user != null && user != "") {
+    user = JSON.parse(user);
+    return user;
+  }
+  return null;
+};
+
+export const setUser = (user = {}) => {
+  // user = {
+  //     Firstname:"",
+  //     Firstname:"",
+  //     Firstname:"",
+  //     Firstname:"",
+  // }
+  localStorage.setItem("profile", JSON.stringify(user));
+  localStorage.setItem("isLogin", "1");
+};
+
+export const logout = () => {
+  localStorage.setItem("profile", "");
+  localStorage.setItem("isLogin", "0");
+  window.location.href = "login";
+};
+
+export const isLogin = () => {
+  if (localStorage.getItem("isLogin") == "1") {
+    return true;
+  } else {
+    return false;
+  }
 };

@@ -34,7 +34,7 @@ const HomePage = () => {
         <div>
           {list.map((item, index) => (
             <div key={item.Id}>
-              <div style={{ backgroundColor: "green" }}>
+              <div className=" bg-green-500">
                 <div>
                   {index + 1}. {item.Firstname}-{item.Lastname}
                 </div>

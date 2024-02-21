@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { request } from "../config/request";
+import { setUser } from "../config/helper";
+import { useNavigate } from "react-router-dom";
+
 const LoginPage = () => {
-  const [username, setUsername] = useState("aa");
-  const [password, setPassword] = useState("123");
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const onChangeUsername = (event) => {
     setUsername(event.target.value);
@@ -18,19 +22,18 @@ const LoginPage = () => {
       return false;
     }
     var data = {
-      Username: username, //098521122
+      Username: username, //099998888
       Password: password, //"123456"
     };
     const res = await request("employee/login", "post", data);
+    // alert(JSON.stringify(res))
     if (res) {
       if (res.error) {
         alert(res.message);
       } else {
-        localStorage.setItem(
-          "fullname",
-          res.user.Firstname + "-" + res.user.Lastname
-        );
-        localStorage.getItem("fullname");
+        // Login success
+        setUser(res.user);
+        navigate("/");
       }
     }
   };
@@ -38,15 +41,16 @@ const LoginPage = () => {
   return (
     <div
       style={{
+        marginTop: 20,
         backgroundColor: "pink",
+        padding: 20,
       }}
     >
       <input onChange={onChangeUsername} placeholder="username" />
       <br />
       <input onChange={onChnagePassword} placeholder="password" />
       <br />
-      {/* <div>{username}-{password}</div> */}
-      <button onClick={onLogin}>Login</button>
+      <button onClick={onLogin}>login</button>
     </div>
   );
 };

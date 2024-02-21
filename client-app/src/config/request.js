@@ -10,15 +10,16 @@ export const request = async (url = "", method = "get", data = {}) => {
   })
     .then((res) => {
       // case api response
+      console.log("aaaaaa :", res.data);
       return res.data;
     })
     .catch((error) => {
       // error
+      console.log("bbbbbbbb ", error);
       var status = error.response.status;
       if (status == 404) {
         alert(error.message);
       }
-      console.log(error);
       return false;
     });
 };

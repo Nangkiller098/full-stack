@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { NavbarSimple } from "./NavbarWithSearch";
 const MainLayout = () => {
   const fullname = localStorage.getItem("fullname");
@@ -7,7 +7,7 @@ const MainLayout = () => {
       <div>
         <div>Brand Name</div>
         <div>User Login:{fullname}</div>
-        <div className="">
+        {/* <div className="">
           <Link to={"/"} className=" p-2">
             <button className="">Homepage</button>
           </Link>
@@ -17,7 +17,7 @@ const MainLayout = () => {
           <Link to={"/register"} className=" p-2">
             <button>Register</button>
           </Link>
-        </div>
+        </div> */}
         <NavbarSimple />
         <div>
           <Outlet />
