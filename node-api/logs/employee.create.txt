@@ -1,2 +1,0 @@
-[2024-02-15 09:46:45]  Error: Unknown column 'Address' in 'field list'
-

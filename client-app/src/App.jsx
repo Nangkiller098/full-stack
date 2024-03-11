@@ -4,8 +4,9 @@ import Homepage from "./page/Homepage";
 import LoginPage from "./page/LoginPage";
 import RegisterPage from "./page/RegisterPage";
 import RouteNotFoundPage from "./page/RouteNotFoundPage";
+import CategoryPage from "./page/CategoryPage";
 import MainLayout from "./components/layout/MainLayout";
-import CategoryPage from "./page/Category";
+
 function App() {
   return (
     <>

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const Config = {
   base_url: "http://localhost:8081/api/",
   image_path: "",
@@ -37,4 +39,11 @@ export const isLogin = () => {
   } else {
     return false;
   }
+};
+
+export const formartDateClient = (date) => {
+  if (date !== null && date !== "") {
+    return dayjs(date).format("YYYY-MM-DD");
+  }
+  return null;
 };

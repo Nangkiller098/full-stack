@@ -1,14 +1,28 @@
-const { logError } = require("../config/helper");
+const { logError, validation } = require("../config/helper");
 const db = require("../config/db");
 
 const getList = async (req, res) => {
   try {
-    const [list] = await db.query("SELECT * FROM category ");
+    var { txt_search, status } = req.query;
+    var param = {};
+    var sql = " SELECT * FROM category WHERE 1=1 ";
+    if (!validation(txt_search)) {
+      sql += " AND (Name LIKE :txt_search OR Description LIKE :txt_search) ";
+      param["txt_search"] = "%" + txt_search + "%";
+    }
+    if (!validation(status)) {
+      sql += " AND status =:status";
+      param["status"] = status;
+    }
+    sql += " ORDER BY Id DESC";
+    const [list] = await db.query(sql, param);
+    const [count] = await db.query("SELECT COUNT(Id) as total FROM category");
     res.json({
-      list: list,
+      count,
+      list,
     });
-  } catch (error) {
-    logError("category.getList", error, res);
+  } catch (err) {
+    logError("category.getList", err, res);
   }
 };
 const getById = async (req, res) => {

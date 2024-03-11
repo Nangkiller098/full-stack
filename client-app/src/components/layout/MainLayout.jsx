@@ -35,7 +35,7 @@ const items = [
   getItem("Logout", "logout", <DesktopOutlined />),
 ];
 
-const App = () => {
+const MainLayout = () => {
   const user = getUser();
   const navigate = useNavigate();
   useEffect(() => {
@@ -147,7 +147,7 @@ const App = () => {
     </Layout>
   );
 };
-export default App;
+export default MainLayout;
 
 // import {Outlet,Link,useNavigate, json} from "react-router-dom"
 // import { getUser, isLogin, logout } from "../../config/helper";

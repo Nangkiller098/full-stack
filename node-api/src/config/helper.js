@@ -66,11 +66,10 @@ const removeFile = async (fileName) => {
     throw err;
   }
 };
+module.exports = { logError, validation, upload, removeFile };
 
 // const myupload=multer({
 //   storage:,
 //   limits:,
 //   fileFilter:,
 // })
-
-module.exports = { logError, validation, upload, removeFile };
