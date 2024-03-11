@@ -19,6 +19,8 @@ export const request = async (url = "", method = "get", data = {}) => {
       var status = error.response.status;
       if (status == 404) {
         alert(error.message);
+      } else if (status == 500) {
+        alert(error.message);
       }
       return false;
     });
