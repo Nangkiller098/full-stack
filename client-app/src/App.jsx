@@ -18,12 +18,9 @@ function App() {
             <Route path="/category" element={<h1>category</h1>} />
             <Route path="*" element={<RouteNotFoundPage />} />
           </Route>
-
-          <Route element={<MainLayout />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="*" element={<LoginPage />} />
-          </Route>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="*" element={<LoginPage />} />
         </Routes>
       </BrowserRouter>
     </>
