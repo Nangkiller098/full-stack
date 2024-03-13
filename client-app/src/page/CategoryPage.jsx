@@ -155,7 +155,7 @@ const CategoryPage = () => {
         dataSource={list}
         pagination={{
           pageSize: 5,
-          total: 100,
+          // total: 100,
         }}
         // onChange={}
         columns={[
@@ -214,6 +214,7 @@ const CategoryPage = () => {
         ]}
       />
       <Modal
+        forceRender
         title={
           formCat.getFieldValue("Id") == null
             ? "New Catetory"
@@ -242,7 +243,7 @@ const CategoryPage = () => {
           </Form.Item>
 
           <Form.Item label="Status" name={"Status"}>
-            <Select onChange={onChangeStatus} defaultValue={"1"}>
+            <Select onChange={onChangeStatus}>
               <Select.Option value="1">Actived</Select.Option>
               <Select.Option value="0">InActived</Select.Option>
             </Select>

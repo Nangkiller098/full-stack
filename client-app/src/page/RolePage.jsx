@@ -29,8 +29,8 @@ const RolePage = () => {
   }, [formCat]);
 
   const filterRef = useRef({
-    txt_search: null,
-    status: null,
+    txt_search: "",
+    status: "",
   });
 
   const getList = async () => {
@@ -39,7 +39,7 @@ const RolePage = () => {
       txt_search: filterRef.current.txt_search,
       status: filterRef.current.status,
     };
-    const res = await request("category", "get", param);
+    const res = await request("role/getList", "get", param);
     setLoading(false);
     if (res) {
       setList(res.list);
@@ -50,7 +50,7 @@ const RolePage = () => {
     formCat.setFieldsValue({
       Id: item.Id, //
       Name: item.Name,
-      Description: item.Description,
+      Code: item.Code,
       Status: item.Status + "",
     });
     setOpen(true);
@@ -67,7 +67,7 @@ const RolePage = () => {
         var data = {
           Id: item.Id,
         };
-        const res = await request("category", "delete", data);
+        const res = await request("role/delete", "delete", data);
         if (res) {
           message.success(res.message);
           getList();
@@ -80,11 +80,12 @@ const RolePage = () => {
     var data = {
       Id: Id,
       Name: item.Name,
-      Description: item.Description,
+      Code: item.Code,
       Status: item.Status,
     };
     var method = Id == null ? "post" : "put";
-    const res = await request("category", method, data);
+    const url = Id == null ? "role/create" : "role/update";
+    const res = await request(url, method, data);
     if (res) {
       message.success(res.message);
       getList();
@@ -122,7 +123,7 @@ const RolePage = () => {
         }}
       >
         <Space>
-          <div className="txt_title">Category</div>
+          <div className="txt_title">role</div>
           <Input.Search
             allowClear
             onChange={onChangeSearch}
@@ -155,7 +156,7 @@ const RolePage = () => {
         dataSource={list}
         pagination={{
           pageSize: 5,
-          total: 100,
+          // total: 100,
         }}
         // onChange={}
         columns={[
@@ -171,9 +172,9 @@ const RolePage = () => {
             dataIndex: "Name",
           },
           {
-            key: "Description",
-            title: "Description",
-            dataIndex: "Description",
+            key: "Code",
+            title: "Code",
+            dataIndex: "Code",
           },
           {
             key: "Status",
@@ -214,10 +215,9 @@ const RolePage = () => {
         ]}
       />
       <Modal
+        forceRender
         title={
-          formCat.getFieldValue("Id") == null
-            ? "New Catetory"
-            : "Update Category"
+          formCat.getFieldValue("Id") == null ? "New Catetory" : "Update role"
         }
         open={open}
         onCancel={onCloseModal}
@@ -230,15 +230,24 @@ const RolePage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input category name!",
+                message: "Please input role name!",
               },
             ]}
           >
-            <Input placeholder="Category name" />
+            <Input placeholder="role name" />
           </Form.Item>
 
-          <Form.Item label="Description" name={"Description"}>
-            <Input placeholder="Description" />
+          <Form.Item
+            label="Code"
+            name={"Code"}
+            rules={[
+              {
+                required: true,
+                message: "Please input role Code!",
+              },
+            ]}
+          >
+            <Input placeholder="Code" />
           </Form.Item>
 
           <Form.Item label="Status" name={"Status"}>

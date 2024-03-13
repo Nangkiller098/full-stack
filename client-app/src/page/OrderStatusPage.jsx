@@ -253,7 +253,7 @@ const OrderStatusPage = () => {
           </Form.Item>
 
           <Form.Item label="Status" name={"Status"}>
-            <Select onChange={onChangeStatus} defaultValue={1}>
+            <Select onChange={onChangeStatus}>
               <Select.Option value="1">Actived</Select.Option>
               <Select.Option value="0">InActived</Select.Option>
             </Select>

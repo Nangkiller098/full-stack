@@ -29,8 +29,8 @@ const PaymentMethodPage = () => {
   }, [formCat]);
 
   const filterRef = useRef({
-    txt_search: null,
-    status: null,
+    txt_search: "",
+    status: "",
   });
 
   const getList = async () => {
@@ -39,7 +39,7 @@ const PaymentMethodPage = () => {
       txt_search: filterRef.current.txt_search,
       status: filterRef.current.status,
     };
-    const res = await request("category", "get", param);
+    const res = await request("order_payment_method/list", "get", param);
     setLoading(false);
     if (res) {
       setList(res.list);
@@ -50,7 +50,7 @@ const PaymentMethodPage = () => {
     formCat.setFieldsValue({
       Id: item.Id, //
       Name: item.Name,
-      Description: item.Description,
+      Code: item.Code,
       Status: item.Status + "",
     });
     setOpen(true);
@@ -67,7 +67,11 @@ const PaymentMethodPage = () => {
         var data = {
           Id: item.Id,
         };
-        const res = await request("category", "delete", data);
+        const res = await request(
+          "order_payment_method/delete",
+          "delete",
+          data
+        );
         if (res) {
           message.success(res.message);
           getList();
@@ -80,11 +84,15 @@ const PaymentMethodPage = () => {
     var data = {
       Id: Id,
       Name: item.Name,
-      Description: item.Description,
+      Code: item.Code,
       Status: item.Status,
     };
     var method = Id == null ? "post" : "put";
-    const res = await request("category", method, data);
+    const url =
+      Id == null
+        ? "order_payment_method/create"
+        : "order_payment_method/update";
+    const res = await request(url, method, data);
     if (res) {
       message.success(res.message);
       getList();
@@ -122,7 +130,7 @@ const PaymentMethodPage = () => {
         }}
       >
         <Space>
-          <div className="txt_title">Category</div>
+          <div className="txt_title">order_payment_method</div>
           <Input.Search
             allowClear
             onChange={onChangeSearch}
@@ -155,7 +163,7 @@ const PaymentMethodPage = () => {
         dataSource={list}
         pagination={{
           pageSize: 5,
-          total: 100,
+          // total: 100,
         }}
         // onChange={}
         columns={[
@@ -171,9 +179,9 @@ const PaymentMethodPage = () => {
             dataIndex: "Name",
           },
           {
-            key: "Description",
-            title: "Description",
-            dataIndex: "Description",
+            key: "Code",
+            title: "Code",
+            dataIndex: "Code",
           },
           {
             key: "Status",
@@ -214,10 +222,11 @@ const PaymentMethodPage = () => {
         ]}
       />
       <Modal
+        forceRender
         title={
           formCat.getFieldValue("Id") == null
-            ? "New Catetory"
-            : "Update Category"
+            ? "New order_payment_method"
+            : "Update order_payment_method"
         }
         open={open}
         onCancel={onCloseModal}
@@ -230,19 +239,19 @@ const PaymentMethodPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input category name!",
+                message: "Please input order_payment_method name!",
               },
             ]}
           >
-            <Input placeholder="Category name" />
+            <Input placeholder="order_payment_method name" />
           </Form.Item>
 
-          <Form.Item label="Description" name={"Description"}>
-            <Input placeholder="Description" />
+          <Form.Item label="Code" name={"Code"}>
+            <Input placeholder="Code" />
           </Form.Item>
 
           <Form.Item label="Status" name={"Status"}>
-            <Select onChange={onChangeStatus} defaultValue={"1"}>
+            <Select onChange={onChangeStatus}>
               <Select.Option value="1">Actived</Select.Option>
               <Select.Option value="0">InActived</Select.Option>
             </Select>

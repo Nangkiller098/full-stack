@@ -1,23 +1,20 @@
 const db = require("../config/db");
-const { logError } = require("../config/helper");
+const { logError, validation } = require("../config/helper");
 
-// const getList = (req, res) => {
-//   db.query("SELECT * FROM role;", (error, row) => {
-//     if (error) {
-//       res.json({
-//         error: true,
-//         message: error,
-//       });
-//     } else {
-//       res.json({
-//         list: row,
-//       });
-//     }
-//   });
-// };
 const getList = async (req, res) => {
   try {
-    const [list] = await db.query("SELECT * FROM role");
+    var { txt_search, status } = req.query;
+    var param = {};
+    var sql = "SELECT * FROM role WHERE 1=1";
+    if (!validation(txt_search)) {
+      sql += " AND (NAME LIKE :txt_search OR Code LIKE :txt_search)";
+      param["txt_search"] = "%" + txt_search + "%";
+    }
+    if (!validation(status)) {
+      sql += " AND Status =:status";
+      param["status"] = status;
+    }
+    const [list] = await db.query(sql, param);
     res.json({
       list: list,
     });

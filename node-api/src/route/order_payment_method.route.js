@@ -15,7 +15,7 @@ const order_payment_method = (app) => {
   app.put(
     `/api/order_payment_method/update`,
     order_payment_method_controller.update
-  );
+  );  
   app.delete(
     `/api/order_payment_method/delete`,
     order_payment_method_controller.remove
