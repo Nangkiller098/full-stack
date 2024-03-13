@@ -15,7 +15,7 @@ import {
 import { formartDateClient } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 
-const CategoryPage = () => {
+const OrderStatusPage = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -39,7 +39,7 @@ const CategoryPage = () => {
       txt_search: filterRef.current.txt_search,
       status: filterRef.current.status,
     };
-    const res = await request("category", "get", param);
+    const res = await request("order_status/list", "get", param);
     setLoading(false);
     if (res) {
       setList(res.list);
@@ -50,7 +50,7 @@ const CategoryPage = () => {
     formCat.setFieldsValue({
       Id: item.Id, //
       Name: item.Name,
-      Description: item.Description,
+      Code: item.Code,
       Status: item.Status + "",
     });
     setOpen(true);
@@ -67,7 +67,7 @@ const CategoryPage = () => {
         var data = {
           Id: item.Id,
         };
-        const res = await request("category", "delete", data);
+        const res = await request("order_status/delete", "delete", data);
         if (res) {
           message.success(res.message);
           getList();
@@ -80,21 +80,22 @@ const CategoryPage = () => {
     var data = {
       Id: Id,
       Name: item.Name,
-      Description: item.Description,
+      Code: item.Code,
       Status: item.Status,
+      UserId: 1,
     };
     var method = Id == null ? "post" : "put";
-    const res = await request("category", method, data);
+    const url = Id == null ? "order_status/create" : "order_status/update";
+    const res = await request(url, method, data);
     if (res) {
       message.success(res.message);
       getList();
       onCloseModal();
     }
   };
-  const onTextSearch = () => {
-    // filterRef.current.txt_search = value // set value to ref key txt_search
-    // // var x = filterRef.current.txt_search // get
-    // getList();
+  const onTextSearch = (e) => {
+    filterRef.current.txt_search = e.target.value;
+    getList();
   };
   const onChangeSearch = (e) => {
     filterRef.current.txt_search = e.target.value;
@@ -122,7 +123,7 @@ const CategoryPage = () => {
         }}
       >
         <Space>
-          <div className="txt_title">Category</div>
+          <div className="txt_title">Order Status</div>
           <Input.Search
             allowClear
             onChange={onChangeSearch}
@@ -135,8 +136,8 @@ const CategoryPage = () => {
             allowClear
             style={{ width: 120 }}
           >
-            <Select.Option value={"1"}>Active</Select.Option>
-            <Select.Option value={"0"}>InActive</Select.Option>
+            <Select.Option value={1}>Active</Select.Option>
+            <Select.Option value={0}>InActive</Select.Option>
           </Select>
           <DatePicker />
           <DatePicker />
@@ -171,9 +172,9 @@ const CategoryPage = () => {
             dataIndex: "Name",
           },
           {
-            key: "Description",
-            title: "Description",
-            dataIndex: "Description",
+            key: "Code",
+            title: "Code",
+            dataIndex: "Code",
           },
           {
             key: "Status",
@@ -214,10 +215,11 @@ const CategoryPage = () => {
         ]}
       />
       <Modal
+        forceRender
         title={
           formCat.getFieldValue("Id") == null
-            ? "New Catetory"
-            : "Update Category"
+            ? "New Order Status"
+            : "Update Order Status"
         }
         open={open}
         onCancel={onCloseModal}
@@ -230,19 +232,28 @@ const CategoryPage = () => {
             rules={[
               {
                 required: true,
-                message: "Please input category name!",
+                message: "Please input Order Status name!",
               },
             ]}
           >
-            <Input placeholder="Category name" />
+            <Input placeholder="Order Status" />
           </Form.Item>
 
-          <Form.Item label="Description" name={"Description"}>
-            <Input placeholder="Description" />
+          <Form.Item
+            label="Code"
+            name={"Code"}
+            rules={[
+              {
+                required: true,
+                message: "Please input Order Status Code!",
+              },
+            ]}
+          >
+            <Input placeholder="Code" />
           </Form.Item>
 
           <Form.Item label="Status" name={"Status"}>
-            <Select onChange={onChangeStatus} defaultValue={"1"}>
+            <Select onChange={onChangeStatus} defaultValue={1}>
               <Select.Option value="1">Actived</Select.Option>
               <Select.Option value="0">InActived</Select.Option>
             </Select>
@@ -261,4 +272,4 @@ const CategoryPage = () => {
   );
 };
 
-export default CategoryPage;
+export default OrderStatusPage;

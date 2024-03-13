@@ -1,0 +1,42 @@
+[2024-03-13 09:51:43]  ReferenceError: sql is not defined
+
+[2024-03-13 09:51:48]  ReferenceError: sql is not defined
+
+[2024-03-13 09:52:04]  ReferenceError: sql is not defined
+
+[2024-03-13 09:52:20]  ReferenceError: sql is not defined
+
+[2024-03-13 09:52:31]  ReferenceError: sql is not defined
+
+[2024-03-13 09:52:41]  ReferenceError: sql is not defined
+
+[2024-03-13 09:53:42]  ReferenceError: sql is not defined
+
+[2024-03-13 09:53:46]  ReferenceError: sql is not defined
+
+[2024-03-13 09:54:17]  ReferenceError: sql is not defined
+
+[2024-03-13 09:55:03]  ReferenceError: sql is not defined
+
+[2024-03-13 09:55:05]  ReferenceError: sql is not defined
+
+[2024-03-13 09:55:14]  ReferenceError: sql is not defined
+
+[2024-03-13 09:55:15]  ReferenceError: sql is not defined
+
+[2024-03-13 09:56:02]  ReferenceError: sql is not defined
+
+[2024-03-13 09:57:28]  ReferenceError: param is not defined
+
+[2024-03-13 09:57:53]  ReferenceError: list is not defined
+
+[2024-03-13 09:58:14]  Error: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined
+
+[2024-03-13 09:59:02]  Error: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined
+
+[2024-03-13 10:00:58]  Error: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined
+
+[2024-03-13 10:02:03]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-13 10:03:39]  Error: FUNCTION full_stack.1AND does not exist
+

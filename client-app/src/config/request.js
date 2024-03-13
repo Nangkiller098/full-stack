@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Config } from "./helper";
+import { message } from "antd";
 export const request = async (url = "", method = "get", data = {}) => {
   var param_get = "";
   if (method === "get" && Object.keys(data).length > 0) {
@@ -27,12 +28,14 @@ export const request = async (url = "", method = "get", data = {}) => {
     })
     .catch((error) => {
       // error
-      console.log("bbbbbbbb ", error);
+      console.log("Unexpected Error ", error);
+      message.error("Unexpected Error ", error);
       var status = error.response?.status;
       if (status == 404) {
-        alert(error.message);
+        // alert(error.message);
+        message.error(error.message);
       } else if (status == 500) {
-        alert(error.message);
+        message.error(error.message);
       }
       return false;
     });

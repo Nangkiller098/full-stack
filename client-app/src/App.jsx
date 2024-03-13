@@ -6,6 +6,9 @@ import RegisterPage from "./page/RegisterPage";
 import RouteNotFoundPage from "./page/RouteNotFoundPage";
 import CategoryPage from "./page/CategoryPage";
 import MainLayout from "./components/layout/MainLayout";
+import OrderStatusPage from "./page/OrderStatusPage";
+import PaymentMethodPage from "./page/PaymentMethodPage";
+import RolePage from "./page/RolePage";
 
 function App() {
   return (
@@ -18,6 +21,9 @@ function App() {
             <Route path="/employee" element={<h1>employee</h1>} />
             <Route path="/product" element={<h1>product</h1>} />
             <Route path="/category" element={<CategoryPage />} />
+            <Route path="/order-status" element={<OrderStatusPage />} />
+            <Route path="/payment-method" element={<PaymentMethodPage />} />
+            <Route path="/role" element={<RolePage />} />
             <Route path="*" element={<RouteNotFoundPage />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />

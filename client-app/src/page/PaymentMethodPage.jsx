@@ -15,7 +15,7 @@ import {
 import { formartDateClient } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 
-const CategoryPage = () => {
+const PaymentMethodPage = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -29,8 +29,8 @@ const CategoryPage = () => {
   }, [formCat]);
 
   const filterRef = useRef({
-    txt_search: "",
-    status: "",
+    txt_search: null,
+    status: null,
   });
 
   const getList = async () => {
@@ -261,4 +261,4 @@ const CategoryPage = () => {
   );
 };
 
-export default CategoryPage;
+export default PaymentMethodPage;

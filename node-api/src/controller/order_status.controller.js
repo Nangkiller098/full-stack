@@ -1,9 +1,20 @@
-const { logError } = require("../config/helper");
+const { logError, validation } = require("../config/helper");
 const db = require("../config/db");
 
 const getList = async (req, res) => {
   try {
-    const [list] = await db.query("SELECT * FROM order_status ");
+    var { txt_search, status } = req.query;
+    var sql = " SELECT * FROM order_status WHERE 1=1";
+    var param = {};
+    if (!validation(txt_search)) {
+      sql += " AND (NAME LIKE :txt_search OR Code LIKE :txt_search)";
+      param["txt_search"] = "%" + txt_search + "%";
+    }
+    if (!validation(status)) {
+      sql += " AND Status =:status";
+      param["status"] = status;
+    }
+    const [list] = await db.query(sql, param);
     res.json({
       list: list,
     });
