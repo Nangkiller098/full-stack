@@ -32,10 +32,10 @@ export const request = async (url = "", method = "get", data = {}) => {
       message.error("Unexpected Error ", error);
       var status = error.response?.status;
       if (status == 404) {
-        // alert(error.message);
-        message.error(error.message);
+        console.log(error.message);
+        // message.error(error.message);
       } else if (status == 500) {
-        message.error(error.message);
+        console.log(error.message);
       }
       return false;
     });

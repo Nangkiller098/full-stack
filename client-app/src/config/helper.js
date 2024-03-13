@@ -47,3 +47,10 @@ export const formartDateClient = (date) => {
   }
   return null;
 };
+
+export const formartDateServer = (date) => {
+  if (date !== null && date !== "") {
+    return dayjs(date).format("YYYY-MM-DD");
+  }
+  return null;
+};

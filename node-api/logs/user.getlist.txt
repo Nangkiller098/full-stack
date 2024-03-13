@@ -1,8 +1,0 @@
-[2024-03-13 11:07:47]  ReferenceError: validation is not defined
-
-[2024-03-13 11:07:56]  ReferenceError: validation is not defined
-
-[2024-03-13 11:07:59]  ReferenceError: validation is not defined
-
-[2024-03-13 11:08:17]  Error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'AND (NAME LIKE '%null%' OR Code LIKE '%null%') AND Status ='null'' at line 1
-

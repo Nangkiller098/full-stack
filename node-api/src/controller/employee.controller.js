@@ -1,5 +1,5 @@
 const db = require("../config/db"); //import db connection funct
-const { logError } = require("../config/helper");
+const { logError, validation } = require("../config/helper");
 const bcrypt = require("bcrypt");
 const setPassword = async (req, res) => {
   try {
@@ -75,12 +75,33 @@ const login = async (req, res) => {
 };
 const getlist = async (req, res) => {
   try {
-    var sql = "SELECT * FROM employee";
-    const [list] = await db.query(sql);
+    var { txt_search, status, role_id } = req.query;
+    var param = {};
+    var sql =
+      "SELECT e.*,r.Name as RoleName FROM employee e INNER JOIN role r ON e.RoleId = r.Id WHERE 1=1 ";
+
+    if (!validation(txt_search)) {
+      sql +=
+        "AND (e.Firstname LIKE :txt_search OR e.Lastname LIKE :txt_search) ";
+      param["txt_search"] = "%" + txt_search + "%";
+    }
+    if (!validation(status)) {
+      sql += " AND e.Status =:status";
+      param["status"] = status;
+    }
+    if (!validation(role_id)) {
+      sql += " AND e.RoleId =:role_id";
+      param["role_id"] = role_id;
+    }
+    sql += " ORDER BY Id DESC";
+    const [list] = await db.query(sql, param);
+    const [role] = await db.query("SELECT * FROM role");
     res.json({
       list: list,
+      role: role,
     });
   } catch (err) {
+    console.log(sql);
     logError("employee.getlist", err, res);
   }
 };
@@ -105,7 +126,7 @@ const create = async (req, res) => {
       INSERT INTO employee  (RoleId,Firstname, Lastname, Gender, Dob, Tel, Email, Address, Status,Image,Salary) 
       VALUES (:RoleId,:Firstname, :Lastname, :Gender, :Dob, :Tel, :Email, :Status, :Address,:Image,:Salary)`;
     var param = {
-      RoleId: 1,
+      RoleId: req.body.RoleId,
       Firstname: req.body.Firstname,
       Lastname: req.body.Lastname,
       Gender: req.body.Gender,
@@ -130,9 +151,10 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   try {
     var sql =
-      "UPDATE employee SET Firstname:=Firstname, Lastname=:Lastname, Gender=:Gender, Dob=:Dob, Tel=:Tel, Email=:Email, Address=:Address, Status=:Status ,CreateBy=:CreateBy ,UpdateBy=:UpdateBy WHERE Id =:Id";
+      "UPDATE employee SET RoleId=:RoleId ,Firstname=:Firstname, Lastname=:Lastname, Gender=:Gender, Dob=:Dob, Tel=:Tel, Email=:Email, Address=:Address, Status=:Status,Salary=:Salary ,CreateBy=:CreateBy ,UpdateBy=:UpdateBy WHERE Id =:Id";
     var param = {
       Id: req.body.Id,
+      RoleId: req.body.RoleId,
       Firstname: req.body.Firstname,
       Lastname: req.body.Lastname,
       Gender: req.body.Gender,
@@ -141,6 +163,7 @@ const update = async (req, res) => {
       Email: req.body.Email,
       Address: req.body.Address,
       Status: req.body.Status,
+      Salary: req.body.Salary,
       CreateBy: req.body.CreateBy,
       UpdateBy: req.body.UpdateBy,
     };

@@ -156,7 +156,6 @@ const OrderStatusPage = () => {
         dataSource={list}
         pagination={{
           pageSize: 5,
-          total: 100,
         }}
         // onChange={}
         columns={[
