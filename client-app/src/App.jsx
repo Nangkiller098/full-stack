@@ -10,6 +10,7 @@ import OrderStatusPage from "./page/OrderStatusPage";
 import PaymentMethodPage from "./page/PaymentMethodPage";
 import RolePage from "./page/RolePage";
 import EmployeePage from "./page/EmployeePage";
+import CustomerPage from "./page/CustomerPage";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <Routes>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Homepage />} />
-            <Route path="/customer" element={<h1>customer</h1>} />
+            <Route path="/customer" element={<CustomerPage />} />
             <Route path="/employee" element={<EmployeePage />} />
             <Route path="/product" element={<h1>product</h1>} />
             <Route path="/product-stock" element={<h1>product stock</h1>} />

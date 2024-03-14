@@ -1,0 +1,34 @@
+[2024-03-14 16:23:37]  Error: Unknown column 'e.Status' in 'where clause'
+
+[2024-03-14 16:24:03]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:24:03]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:24:04]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:26:28]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:26:40]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:02]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:04]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:04]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:04]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:04]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:28]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:27:41]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:28:16]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:28:16]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:28:16]  Error: FUNCTION full_stack.1AND does not exist
+
+[2024-03-14 16:28:16]  Error: FUNCTION full_stack.1AND does not exist
+

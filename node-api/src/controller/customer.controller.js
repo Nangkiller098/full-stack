@@ -1,13 +1,28 @@
 const db = require("../config/db"); //import db connection funct
-const { logError } = require("../config/helper");
+const { logError, validation } = require("../config/helper");
 const getlist = async (req, res) => {
   try {
-    var sql = "SELECT * FROM customer";
-    const [list] = await db.query(sql);
+    var { txt_search, status } = req.query;
+    var param = {};
+    var sql = "SELECT * FROM customer WHERE 1=1";
+
+    if (!validation(txt_search)) {
+      sql += " AND (Firstname LIKE :txt_search OR Lastname LIKE :txt_search) ";
+      param["txt_search"] = "%" + txt_search + "%";
+    }
+
+    if (!validation(status)) {
+      sql += " AND Status =:status";
+      param["status"] = status;
+    }
+
+    sql += " ORDER BY Id DESC";
+    const [list] = await db.query(sql, param);
     res.json({
       list: list,
     });
   } catch (err) {
+    console.log(sql);
     logError("customer.getlist", err, res);
   }
 };
