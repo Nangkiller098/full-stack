@@ -4,8 +4,10 @@ const db = require("../config/db");
 const getList = async (req, res) => {
   try {
     const [list] = await db.query("SELECT * FROM product ");
+    const [category] = await db.query("SELECT * FROM category");
     res.json({
       list: list,
+      category: category,
     });
   } catch (error) {
     logError("product.getList", error, res);
@@ -114,9 +116,12 @@ const update = async (req, res) => {
       Qty,
       Price,
       Discount,
-      Image,
       Status,
     };
+    var Image = null;
+    if (req.file) {
+      Image = req.file.filename;
+    }
 
     const [dataInfo] = await db.query("SELECT * FROM product WHERE Id = :Id", {
       Id: Id,

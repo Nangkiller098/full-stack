@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 
 export const Config = {
   base_url: "http://localhost:8081/api/",
-  image_path: "",
+  image_path: "http://localhost:8080/fullstack/image_g7/",
   version: "",
   token: "",
 };
@@ -17,12 +17,6 @@ export const getUser = () => {
 };
 
 export const setUser = (user = {}) => {
-  // user = {
-  //     Firstname:"",
-  //     Firstname:"",
-  //     Firstname:"",
-  //     Firstname:"",
-  // }
   localStorage.setItem("profile", JSON.stringify(user));
   localStorage.setItem("isLogin", "1");
 };

@@ -4,13 +4,6 @@ import { message } from "antd";
 export const request = async (url = "", method = "get", data = {}) => {
   var param_get = "";
   if (method === "get" && Object.keys(data).length > 0) {
-    // data = {
-    //     txt_search : "d",
-    //     status : 1,
-    //     brand : 1,
-    //     group : 1,
-    // }
-    // ?txt_search=com&status=1&brand=a&group=b
     Object.keys(data).map((key, i) => {
       param_get += (i == 0 ? "?" : "&") + key + "=" + data[key];
     });

@@ -13,13 +13,17 @@ import {
   DatePicker,
   Row,
   Col,
+  InputNumber,
+  Image,
 } from "antd";
-import { formartDateClient, formartDateServer } from "../config/helper";
+import { Config, formartDateClient, formartDateServer } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 import dayjs from "dayjs";
 
-const CustomerPage = () => {
+const ProductPage = () => {
   const [list, setList] = useState([]);
+  const [category, setCategory] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [formCat] = Form.useForm();
@@ -34,6 +38,7 @@ const CustomerPage = () => {
   const filterRef = useRef({
     txt_search: "",
     status: "",
+    category_id: "",
   });
 
   const getList = async () => {
@@ -42,17 +47,17 @@ const CustomerPage = () => {
       txt_search: filterRef.current.txt_search,
       status: filterRef.current.status,
     };
-    const res = await request("customer/getlist", "get", param);
+    const res = await request("product/getlist", "get", param);
     setLoading(false);
     if (res) {
       setList(res.list);
+      setCategory(res.category);
     }
   };
   const onClickBtnEdit = (item) => {
     formCat.setFieldsValue({
       ...item,
       Dob: dayjs(item.Dob),
-      Gender: item.Gender + "",
       Status: item.Status + "",
     });
     setOpen(true);
@@ -69,7 +74,7 @@ const CustomerPage = () => {
         var data = {
           Id: item.Id,
         };
-        const res = await request("customer/delete", "delete", data);
+        const res = await request("product/delete", "delete", data);
         if (res) {
           message.success(res.message);
           getList();
@@ -83,17 +88,10 @@ const CustomerPage = () => {
       ...item,
       Id: Id,
       Dob: formartDateServer(item.Dob),
+      CategoryId: 1,
     };
-
-    // var data = {
-    //   Id: Id,
-    //   Name: item.Name,
-    //   Code: item.Code,
-    //   Status: item.Status,
-    //   UserId: 1,
-    // };
     var method = Id == null ? "post" : "put";
-    const url = Id == null ? "customer/create" : "customer/update";
+    const url = Id == null ? "product/create" : "product/update";
     const res = await request(url, method, data);
     if (res) {
       message.success(res.message);
@@ -102,7 +100,7 @@ const CustomerPage = () => {
     }
   };
   const onTextSearch = (e) => {
-    filterRef.current.txt_search = !e.target.value || null;
+    filterRef.current.txt_search = e.target.value;
     getList();
   };
   const onChangeSearch = (e) => {
@@ -111,6 +109,11 @@ const CustomerPage = () => {
   };
   const onChangeStatus = (value) => {
     filterRef.current.status = value;
+    getList();
+  };
+
+  const onSelectCategory = (value) => {
+    filterRef.current.category_id = value;
     getList();
   };
 
@@ -132,7 +135,7 @@ const CustomerPage = () => {
         }}
       >
         <Space>
-          <div className="txt_title">Custmer</div>
+          <div className="txt_title">Product</div>
           <Input.Search
             allowClear
             onChange={onChangeSearch}
@@ -148,6 +151,21 @@ const CustomerPage = () => {
             <Select.Option value="1">Active</Select.Option>
             <Select.Option value="0">InActive</Select.Option>
           </Select>
+          <Select
+            onSelect={onSelectCategory}
+            placeholder="Select Role"
+            showSearch
+            optionFilterProp="label"
+            allowClear
+          >
+            {category.map((item, index) => (
+              <Select.Option label={item.Name} key={index} value={item.Id}>
+                {item.Name}
+              </Select.Option>
+            ))}
+          </Select>
+          <DatePicker />
+          <DatePicker />
         </Space>
 
         <Button
@@ -163,6 +181,7 @@ const CustomerPage = () => {
         dataSource={list}
         pagination={{
           pageSize: 5,
+          total: 100,
         }}
         // onChange={}
         columns={[
@@ -173,38 +192,52 @@ const CustomerPage = () => {
             render: (value, item, index) => index + 1,
           },
           {
-            key: "Firstname",
-            title: "Firstname",
-            dataIndex: "Firstname",
+            key: "Name",
+            title: "Name",
+            dataIndex: "Name",
           },
           {
-            key: "Lastname",
-            title: "Lastname",
-            dataIndex: "Lastname",
+            key: "Description",
+            title: "Description",
+            dataIndex: "Description",
           },
           {
-            key: "Gender",
-            title: "Gender",
-            dataIndex: "Gender",
-            render: (value) => (value == 1 ? "Male" : "Female"),
+            key: "Qty",
+            title: "Qty",
+            dataIndex: "Qty",
           },
           {
-            key: "Dob",
-            title: "Dob",
-            dataIndex: "Dob",
-            render: (value) => formartDateClient(value),
+            key: "Price",
+            title: "Price",
+            dataIndex: "Price",
           },
           {
-            key: "Tel",
-            title: "Tel",
-            dataIndex: "Tel",
+            key: "Discount",
+            title: "Discount",
+            dataIndex: "Discount",
           },
           {
-            key: "Address",
-            title: "Address",
-            dataIndex: "Address",
+            key: "Image",
+            title: "Image",
+            dataIndex: "Image",
+            render: (value) => {
+              if (value != null && value != "") {
+                return (
+                  <Image
+                    src={Config.image_path + value}
+                    width={40}
+                    height={30}
+                  />
+                );
+              } else {
+                return (
+                  <div
+                    style={{ height: 30, width: 40, backgroundColor: "#888" }}
+                  ></div>
+                );
+              }
+            },
           },
-
           {
             key: "Status",
             title: "Status",
@@ -246,9 +279,7 @@ const CustomerPage = () => {
       <Modal
         forceRender
         title={
-          formCat.getFieldValue("Id") == null
-            ? "New customer"
-            : "Update customer"
+          formCat.getFieldValue("Id") == null ? "New product" : "Update product"
         }
         open={open}
         onCancel={onCloseModal}
@@ -259,31 +290,31 @@ const CustomerPage = () => {
           <Row gutter={5}>
             <Col span={12}>
               <Form.Item
-                label="Firstname"
-                name={"Firstname"}
+                label="Name"
+                name={"Name"}
                 rules={[
                   {
                     required: true,
-                    message: "Please input Firstname!",
+                    message: "Please input Product Name!",
                   },
                 ]}
               >
-                <Input placeholder="Firstname" />
+                <Input placeholder="Name" />
               </Form.Item>
             </Col>
             <Col span={12}>
               {" "}
               <Form.Item
-                label="Lastname"
-                name={"Lastname"}
+                label="Description"
+                name={"Description"}
                 rules={[
                   {
                     required: true,
-                    message: "Please input Lastname!",
+                    message: "Please input Description!",
                   },
                 ]}
               >
-                <Input placeholder="Lastname" />
+                <Input placeholder="Description" />
               </Form.Item>
             </Col>
           </Row>
@@ -291,38 +322,38 @@ const CustomerPage = () => {
           <Row gutter={5}>
             <Col span={12}>
               <Form.Item
-                label="Gender"
-                name={"Gender"}
+                label="Qty"
+                name={"Qty"}
                 rules={[
                   {
                     required: true,
-                    message: "Please fil in Gender!",
+                    message: "Please fil in Qty!",
                   },
                 ]}
               >
-                <Select>
-                  <Select.Option value="1">Male</Select.Option>
-                  <Select.Option value="0">Female</Select.Option>
-                  <Select.Option value="2">Other</Select.Option>
-                </Select>
+                <InputNumber
+                  className="form-control"
+                  placeholder="Qty"
+                  style={{ width: 100 }}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               {" "}
               <Form.Item
-                label="Dob"
-                name={"Dob"}
+                label="Price"
+                name={"Price"}
                 rules={[
                   {
                     required: true,
-                    message: "Please input Dob!",
+                    message: "Please input Price!",
                   },
                 ]}
               >
-                <DatePicker
-                  style={{ width: "100%" }}
-                  format="DD/MM/YYYY"
-                  placeholder="DOB"
+                <InputNumber
+                  placeholder="Price"
+                  className="form-control"
+                  style={{ width: 100 }}
                 />
               </Form.Item>
             </Col>
@@ -331,26 +362,18 @@ const CustomerPage = () => {
           <Row gutter={5}>
             <Col span={12}>
               <Form.Item
-                label="Tel"
-                name={"Tel"}
+                label="Discount"
+                name={"Discount"}
                 rules={[
                   {
                     required: true,
-                    message: "Please input Tel!",
+                    message: "Please input Discount!",
                   },
                 ]}
               >
-                <Input placeholder="Tel" />
+                <InputNumber placeholder="Discount" />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item label="Email" name={"Email"}>
-                <Input placeholder="Email" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={5}>
             <Col span={12}>
               <Form.Item label="Status" name={"Status"}>
                 <Select>
@@ -359,14 +382,37 @@ const CustomerPage = () => {
                 </Select>
               </Form.Item>
             </Col>
+          </Row>
+          <Row gutter={5}>
             <Col span={12}>
-              {" "}
-              <Form.Item label="Address" name={"Address"}>
-                <Input placeholder="Address" />
+              <Form.Item
+                label="Category"
+                name={"CategoryId"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select Category!",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Role"
+                  showSearch
+                  optionFilterProp="label"
+                >
+                  {category.map((item, index) => (
+                    <Select.Option
+                      label={item.Name}
+                      key={index}
+                      value={item.Id}
+                    >
+                      {item.Name}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
-
           <Form.Item style={{ textAlign: "right" }}>
             <Space>
               <Button onClick={onCloseModal}>Cancel</Button>
@@ -381,4 +427,4 @@ const CustomerPage = () => {
   );
 };
 
-export default CustomerPage;
+export default ProductPage;

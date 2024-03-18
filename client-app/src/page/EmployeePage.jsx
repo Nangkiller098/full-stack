@@ -91,14 +91,6 @@ const EmployeePage = () => {
       Dob: formartDateServer(item.Dob),
       CategoryId: 1,
     };
-
-    // var data = {
-    //   Id: Id,
-    //   Name: item.Name,
-    //   Code: item.Code,
-    //   Status: item.Status,
-    //   UserId: 1,
-    // };
     var method = Id == null ? "post" : "put";
     const url = Id == null ? "employee/create" : "employee/update";
     const res = await request(url, method, data);

@@ -91,11 +91,7 @@ const CategoryPage = () => {
       onCloseModal();
     }
   };
-  const onTextSearch = () => {
-    // filterRef.current.txt_search = value // set value to ref key txt_search
-    // // var x = filterRef.current.txt_search // get
-    // getList();
-  };
+
   const onChangeSearch = (e) => {
     filterRef.current.txt_search = e.target.value;
     getList();
@@ -127,7 +123,6 @@ const CategoryPage = () => {
             allowClear
             onChange={onChangeSearch}
             placeholder="Name or Code"
-            onSearch={onTextSearch}
           />
           <Select
             onChange={onChangeStatus}
