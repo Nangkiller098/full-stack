@@ -1,51 +1,107 @@
-import { useEffect, useState } from "react";
-import { request } from "../config/request";
+import { useState } from "react";
+
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Flex,
+  Input,
+  InputNumber,
+  QRCode,
+  Radio,
+  Select,
+  Space,
+  Spin,
+  Modal,
+} from "antd";
+import { DeleteFilled, SaveFilled } from "@ant-design/icons";
 const HomePage = () => {
-  const [list, setList] = useState([]);
-  const [message, setMessage] = useState("");
-  const [role, setRole] = useState("");
+  const { Option } = Select;
+  const [open, seOpen] = useState(false);
 
-  useEffect(() => {
-    getListCategory();
-  }, []);
+  const options = [];
+  for (let i = 10; i < 36; i++) {
+    options.push({
+      value: i.toString(36) + i,
+      label: i.toString(36) + i,
+    });
+  }
 
-  const getListCategory = async () => {
-    const res = await request("customer/getlist", "GET", {});
-    if (res) {
-      setList(res.list);
-      setMessage("Data has been Get");
-      setRole("");
-    }
+  const onOpenModal = () => {
+    seOpen(true);
+  };
+
+  const handleOk = () => {
+    seOpen(false);
+  };
+
+  const handleCancel = () => {
+    seOpen(false);
   };
 
   return (
-    <>
-      <div>
-        <h1>HomePage</h1>
-        <h1>message : {message}</h1>
-        <h1>role : {role + ""}</h1>
-        <h1>List : {list.length}</h1>
-        {list.length > 0 && (
-          <h1>
-            Username : {list[0].Firstname}-{list[0].Lastname}
-          </h1>
-        )}
-        <div>
-          {list.map((item, index) => (
-            <div key={item.Id}>
-              <div className=" bg-green-500">
-                <div>
-                  {index + 1}. {item.Firstname}-{item.Lastname}
-                </div>
-                <div>Gender : {item.Gender}</div>
-                <div>Contact : {item.Tel}</div>
-                <div>Email : {item.Email}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div>
+      <Flex gap={"small"}>
+        <Button disabled={true}>Save1</Button>
+        <Button loading={true} type="primary">
+          Save1
+        </Button>
+        <Button size="small" type="dashed">
+          Save2
+        </Button>
+        <Button
+          style={{ width: 200, marginTop: 10 }}
+          danger={true}
+          type="primary"
+        >
+          Save2
+        </Button>
+      </Flex>
+      <div style={{ width: 300, backgroundColor: "lightgray", marginTop: 10 }}>
+        <Button block={true}>AAAA</Button>
       </div>
-    </>
+
+      <Button icon={<DeleteFilled />}>Delete</Button>
+      <Button danger={true} icon={<DeleteFilled />} />
+      <SaveFilled style={{ fontSize: 35, margin: 20 }} />
+
+      <Space>
+        <Input placeholder="username" /> <br />
+        <Input placeholder="Lastname" />
+        <Input.TextArea placeholder="Des" />
+        <InputNumber />
+        <Checkbox />
+        <Radio />
+        <Select style={{ width: 200 }}>
+          <Option value="1">Active </Option>
+          <Option value="0">InActive </Option>
+        </Select>
+        <DatePicker />
+        <Select
+          mode="tags"
+          style={{
+            width: 300,
+          }}
+          placeholder="Tags Mode"
+          // onChange={handleChange}
+          options={options}
+        />
+        <QRCode value={"https://"} />
+        <Spin spinning={true} />
+      </Space>
+
+      <br />
+      <Button onClick={onOpenModal}>Open Modal</Button>
+      <Modal
+        title="Basic Modal"
+        open={open}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <Input placeholder="A" />
+        <Input placeholder="A" />
+      </Modal>
+    </div>
   );
 };
 

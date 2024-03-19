@@ -124,20 +124,10 @@ const MainLayout = () => {
             margin: "0 16px",
           }}
         >
-          {/* <Breadcrumb
-            style={{
-              margin: '16px 0',
-            }}
-          >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
           <div
             style={{
               padding: 24,
               minHeight: 360,
-              // background: colorBgContainer,
-              // borderRadius: borderRadiusLG,
             }}
           >
             <Outlet />
@@ -148,74 +138,3 @@ const MainLayout = () => {
   );
 };
 export default MainLayout;
-
-// import {Outlet,Link,useNavigate, json} from "react-router-dom"
-// import { getUser, isLogin, logout } from "../../config/helper";
-// import { useEffect } from "react";
-
-// const MainLayout = () => {
-//     const user = getUser();
-
-//     const navigate = useNavigate();
-//     useEffect(()=>{
-//         if(!isLogin()){
-//             navigate("/login")
-//         }
-//     },[])
-
-//     const onClickHome = () => {
-//         // window.location.href="" //refresh page
-//         navigate("") // no refresh page
-//     }
-
-//     const onClickLogin = () => {
-//         // window.location.href="login"
-//         navigate("login")
-//     }
-
-//     const onClickRegister = () => {
-//         // window.location.href="login"
-//         navigate("register")
-//     }
-
-//     const onLogout = () => {
-//         logout();
-//     }
-
-//     if(!user){
-//         return null;
-//     }
-
-//     return (
-//         <div>
-//             <div style={{backgroundColor:"pink",height:80}}>
-//                 <div>Brand Name</div>
-//                 <div>UserInfo : {user?.Id}-{user?.Firstname}-{user?.Lastname}</div>
-//                 <button onClick={onLogout}>Logout</button>
-//             </div>
-//             <Link to={"/"}>
-//                 <button>Home</button>
-//             </Link>
-//             <Link to={"login"}>
-//                 <button>Login</button>
-//             </Link>
-//             <Link to={"register"}>
-//                 <button>Reigster</button>
-//             </Link>
-
-//             <a href="/">Home</a>
-//             <a href="login">Login</a>
-//             <a href="register">Reigster</a>
-
-//             <button onClick={onClickHome}>Btn Home</button>
-//             <button onClick={onClickLogin}>Btn Login</button>
-//             <button onClick={onClickRegister}>Btn Register</button>
-
-//             <div style={{padding:10,minHeight:600}}>
-//                 <Outlet />
-//             </div>
-//         </div>
-//     )
-// }
-
-// export default MainLayout;

@@ -63,7 +63,7 @@ const ProductPage = () => {
   const onClickBtnEdit = (item) => {
     formCat.setFieldsValue({
       ...item,
-      Status: item.Status + "",
+      Status: item.Status === null ? "0" : item.Status + "",
     });
     setFilePreview(Config.image_path + item.Image);
     setOpen(true);
@@ -465,7 +465,12 @@ const ProductPage = () => {
                   )}
                 </div>
 
-                <input ref={fileRef} type="file" onChange={onChangeFile} />
+                <input
+                  ref={fileRef}
+                  src={filePreview}
+                  type="file"
+                  onChange={onChangeFile}
+                />
               </Form.Item>
             </Col>
           </Row>
