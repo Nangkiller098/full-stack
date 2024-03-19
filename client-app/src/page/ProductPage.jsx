@@ -16,9 +16,9 @@ import {
   InputNumber,
   Image,
 } from "antd";
-import { Config, formartDateClient, formartDateServer } from "../config/helper";
+import { Config, formartDateClient, isEmptyOrNull } from "../config/helper";
 import MainPage from "../components/page/MainPage";
-import dayjs from "dayjs";
+import { CloseOutlined } from "@ant-design/icons";
 
 const ProductPage = () => {
   const [list, setList] = useState([]);
@@ -27,6 +27,8 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [formCat] = Form.useForm();
+  const [fileSelected, setFileSelected] = useState(null); // past to api
+  const [filePreview, setFilePreview] = useState(null);
 
   useEffect(() => {
     formCat.setFieldsValue({
@@ -41,11 +43,14 @@ const ProductPage = () => {
     category_id: "",
   });
 
+  const fileRef = useRef(null);
+
   const getList = async () => {
     setLoading(true);
     var param = {
       txt_search: filterRef.current.txt_search,
       status: filterRef.current.status,
+      category_id: filterRef.current.category_id,
     };
     const res = await request("product/getlist", "get", param);
     setLoading(false);
@@ -54,14 +59,16 @@ const ProductPage = () => {
       setCategory(res.category);
     }
   };
+
   const onClickBtnEdit = (item) => {
     formCat.setFieldsValue({
       ...item,
-      Dob: dayjs(item.Dob),
       Status: item.Status + "",
     });
+    setFilePreview(Config.image_path + item.Image);
     setOpen(true);
   };
+
   const onClickBtnDelete = async (item) => {
     Modal.confirm({
       title: "Delete",
@@ -82,31 +89,46 @@ const ProductPage = () => {
       },
     });
   };
+
   const onFinish = async (item) => {
     var Id = formCat.getFieldValue("Id");
-    var data = {
-      ...item,
-      Id: Id,
-      Dob: formartDateServer(item.Dob),
-      CategoryId: 1,
-    };
+    // var data = {
+    //   ...item,
+    //   Id: Id,
+    // };
+    var form = new FormData();
+    form.append("Id", Id);
+    form.append("Name", item.Name);
+    form.append("Description", item.Description);
+    form.append("Qty", item.Qty);
+    form.append("Price", item.Price);
+    form.append("Discount", item.Discount);
+    form.append("CategoryId", item.CategoryId);
+    form.append("Status", item.Status);
+
+    if (fileSelected != null) {
+      form.append("image", fileSelected);
+    }
     var method = Id == null ? "post" : "put";
     const url = Id == null ? "product/create" : "product/update";
-    const res = await request(url, method, data);
+    const res = await request(url, method, form);
     if (res) {
       message.success(res.message);
       getList();
       onCloseModal();
     }
   };
+
   const onTextSearch = (e) => {
     filterRef.current.txt_search = e.target.value;
     getList();
   };
+
   const onChangeSearch = (e) => {
     filterRef.current.txt_search = e.target.value;
     getList();
   };
+
   const onChangeStatus = (value) => {
     filterRef.current.status = value;
     getList();
@@ -123,8 +145,21 @@ const ProductPage = () => {
       Status: "1",
     });
     setOpen(false);
+    onRemoveFileSelected();
   };
 
+  const onChangeFile = (e) => {
+    var file = e.target.files[0];
+    var filePreview = URL.createObjectURL(file);
+    setFileSelected(file);
+    setFilePreview(filePreview);
+  };
+
+  const onRemoveFileSelected = () => {
+    fileRef.current.value = null;
+    setFilePreview(null);
+    setFileSelected(null);
+  };
   return (
     <MainPage loading={loading}>
       <div
@@ -153,7 +188,7 @@ const ProductPage = () => {
           </Select>
           <Select
             onSelect={onSelectCategory}
-            placeholder="Select Role"
+            placeholder="Select Category"
             showSearch
             optionFilterProp="label"
             allowClear
@@ -178,12 +213,12 @@ const ProductPage = () => {
         </Button>
       </div>
       <Table
+        rowKey={"Id"}
         dataSource={list}
         pagination={{
           pageSize: 5,
           total: 100,
         }}
-        // onChange={}
         columns={[
           {
             key: "No",
@@ -285,6 +320,7 @@ const ProductPage = () => {
         onCancel={onCloseModal}
         footer={null}
         closable={false}
+        allowClear
       >
         <Form form={formCat} layout="vertical" onFinish={onFinish}>
           <Row gutter={5}>
@@ -302,8 +338,8 @@ const ProductPage = () => {
                 <Input placeholder="Name" />
               </Form.Item>
             </Col>
+
             <Col span={12}>
-              {" "}
               <Form.Item
                 label="Description"
                 name={"Description"}
@@ -318,7 +354,6 @@ const ProductPage = () => {
               </Form.Item>
             </Col>
           </Row>
-
           <Row gutter={5}>
             <Col span={12}>
               <Form.Item
@@ -331,13 +366,10 @@ const ProductPage = () => {
                   },
                 ]}
               >
-                <InputNumber
-                  className="form-control"
-                  placeholder="Qty"
-                  style={{ width: 100 }}
-                />
+                <InputNumber style={{ width: "100%" }} placeholder="Qty" />
               </Form.Item>
             </Col>
+
             <Col span={12}>
               {" "}
               <Form.Item
@@ -350,11 +382,7 @@ const ProductPage = () => {
                   },
                 ]}
               >
-                <InputNumber
-                  placeholder="Price"
-                  className="form-control"
-                  style={{ width: 100 }}
-                />
+                <InputNumber placeholder="Price" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
           </Row>
@@ -371,7 +399,7 @@ const ProductPage = () => {
                   },
                 ]}
               >
-                <InputNumber placeholder="Discount" />
+                <InputNumber style={{ width: "100%" }} placeholder="Discount" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -396,7 +424,7 @@ const ProductPage = () => {
                 ]}
               >
                 <Select
-                  placeholder="Select Role"
+                  placeholder="Select Category"
                   showSearch
                   optionFilterProp="label"
                 >
@@ -412,7 +440,36 @@ const ProductPage = () => {
                 </Select>
               </Form.Item>
             </Col>
+
+            <Col span={12}>
+              <Form.Item label="Upload Image">
+                <div style={{ width: 80, position: "relative" }}>
+                  {!isEmptyOrNull(filePreview) && (
+                    <CloseOutlined
+                      onClick={onRemoveFileSelected}
+                      style={{
+                        color: "red",
+                        fontSize: 18,
+                        position: "absolute",
+                        top: -6,
+                        right: -6,
+                      }}
+                    />
+                  )}
+                  {!isEmptyOrNull(filePreview) ? (
+                    <img src={filePreview} width={80} alt="" />
+                  ) : (
+                    <div
+                      style={{ width: 80, height: 80, backgroundColor: "#EEE" }}
+                    ></div>
+                  )}
+                </div>
+
+                <input ref={fileRef} type="file" onChange={onChangeFile} />
+              </Form.Item>
+            </Col>
           </Row>
+
           <Form.Item style={{ textAlign: "right" }}>
             <Space>
               <Button onClick={onCloseModal}>Cancel</Button>

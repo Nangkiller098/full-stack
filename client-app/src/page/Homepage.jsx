@@ -16,7 +16,6 @@ const HomePage = () => {
       setMessage("Data has been Get");
       setRole("");
     }
-    console.log(res);
   };
 
   return (

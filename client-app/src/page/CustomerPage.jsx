@@ -160,6 +160,7 @@ const CustomerPage = () => {
         </Button>
       </div>
       <Table
+        rowKey="Id"
         dataSource={list}
         pagination={{
           pageSize: 5,

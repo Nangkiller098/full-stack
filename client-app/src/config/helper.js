@@ -16,6 +16,18 @@ export const getUser = () => {
   return null;
 };
 
+export const isEmptyOrNull = (value) => {
+  if (
+    value === "" ||
+    value === null ||
+    value === undefined ||
+    value === "null" ||
+    value === "undefined"
+  ) {
+    return true;
+  }
+  return false;
+};
 export const setUser = (user = {}) => {
   localStorage.setItem("profile", JSON.stringify(user));
   localStorage.setItem("isLogin", "1");

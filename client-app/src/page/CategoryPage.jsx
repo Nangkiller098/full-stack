@@ -147,6 +147,7 @@ const CategoryPage = () => {
         </Button>
       </div>
       <Table
+        rowKey="Id"
         dataSource={list}
         pagination={{
           pageSize: 5,

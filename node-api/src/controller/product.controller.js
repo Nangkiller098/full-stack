@@ -49,23 +49,23 @@ const create = async (req, res) => {
       message.Price = "Price is require.";
     }
 
-    if (Object.keys(message).length)
-      return res.json({
+    if (Object.keys(message).length > 0) {
+      res.json({
         error: true,
-        message,
+        message: message,
       });
-
-    var sql = `INSERT INTO product
-          (Name, CategoryId, Description, Qty, Price, Discount, Image, Status)
-          VALUES (:Name, :CategoryId, :Description, :Qty, :Price, :Discount, :Image, :Status)`;
+      return false;
+    }
+    var sql =
+      "INSERT INTO product (CategoryId, Name ,Description, Qty, Price, Discount, Image, Status) VALUES (:CategoryId, :Name, :Description, :Qty, :Price, :Discount, :Image, :Status)";
     var param = {
-      Name,
       CategoryId,
+      Name,
       Description,
       Qty,
       Price,
-      Image,
       Discount,
+      Image,
       Status,
     };
     const [data] = await db.query(sql, param);
@@ -80,13 +80,13 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    var { Id, Name, Description, Qty, Price, Discount, Status } = req.body;
-
+    var { Id, CategoryId, Name, Description, Qty, Price, Discount, Status } =
+      req.body;
     var Image = null;
     if (req.file) {
       Image = req.file.filename; // change image | new image
     } else {
-      Image = req.Image; // get old image
+      Image = req.body.Image; // get Old image
     }
 
     var message = {};
@@ -103,22 +103,25 @@ const update = async (req, res) => {
       message.Price = "Price is require.";
     }
 
-    if (Object.keys(message).length)
-      return res.json({
+    if (Object.keys(message).length > 0) {
+      res.json({
         error: true,
-        message,
+        message: message,
       });
+      return false;
+    }
 
     var param = {
       Id,
+      CategoryId,
       Name,
       Description,
       Qty,
       Price,
       Discount,
       Status,
+      Image,
     };
-    var Image = null;
     if (req.file) {
       Image = req.file.filename;
     }
@@ -127,16 +130,12 @@ const update = async (req, res) => {
       Id: Id,
     });
     if (dataInfo.length) {
-      // TODO: Update
-      var sql = `UPDATE product
-              SET Name = :Name, Description = :Description, Qty = :Qty, Price = :Price, Discount = :Discount, Image = :Image, Status = :Status
-              WHERE Id = :Id`;
+      var sql =
+        "UPDATE product SET CategoryId=:CategoryId, Name=:Name ,Description=:Description, Qty=:Qty, Price=:Price, Discount=:Discount, Image=:Image, Status=:Status WHERE Id = :Id";
       const [data] = await db.query(sql, param);
-
       if (data.affectedRows) {
         if (req.file && !validation(req.body.Image)) {
-          // TODO: Remove old file from dir
-          await removeFile(req.body.Image);
+          await removeFile(req.body.Image); // remove old file
         }
       }
       res.json({
@@ -158,19 +157,16 @@ const remove = async (req, res) => {
     var param = {
       Id: req.body.Id,
     };
-    // TODO: find product
     const [dataInfo] = await db.query(
       "SELECT * FROM product WHERE Id = :Id",
       param
     );
     if (dataInfo.length > 0) {
-      // TODO: delete
       var sql = "DELETE FROM product WHERE Id = :Id";
       const [data] = await db.query(sql, param);
 
       if (data.affectedRows) {
         if (!validation(dataInfo[0].Image)) {
-          // TODO: else unlink|remove file
           await removeFile(dataInfo[0].Image);
         }
       }
