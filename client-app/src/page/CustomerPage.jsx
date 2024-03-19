@@ -142,7 +142,6 @@ const CustomerPage = () => {
           <Select
             onChange={onChangeStatus}
             placeholder="Status"
-            allowClear
             style={{ width: 120 }}
           >
             <Select.Option value="1">Active</Select.Option>

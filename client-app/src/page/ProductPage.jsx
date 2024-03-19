@@ -64,6 +64,8 @@ const ProductPage = () => {
     formCat.setFieldsValue({
       ...item,
       Status: item.Status === null ? "0" : item.Status + "",
+      CategoryId: item.CategoryId === null ? "" : item.CategoryId + "",
+      Image: item.Image,
     });
     setFilePreview(Config.image_path + item.Image);
     setOpen(true);
@@ -92,10 +94,6 @@ const ProductPage = () => {
 
   const onFinish = async (item) => {
     var Id = formCat.getFieldValue("Id");
-    // var data = {
-    //   ...item,
-    //   Id: Id,
-    // };
     var form = new FormData();
     form.append("Id", Id);
     form.append("Name", item.Name);
@@ -105,6 +103,7 @@ const ProductPage = () => {
     form.append("Discount", item.Discount);
     form.append("CategoryId", item.CategoryId);
     form.append("Status", item.Status);
+    form.append("PreImage", formCat.getFieldValue("Image"));
 
     if (fileSelected != null) {
       form.append("image", fileSelected);
@@ -180,8 +179,8 @@ const ProductPage = () => {
           <Select
             onChange={onChangeStatus}
             placeholder="Status"
-            allowClear
             style={{ width: 120 }}
+            defaultValue={"1"}
           >
             <Select.Option value="1">Active</Select.Option>
             <Select.Option value="0">InActive</Select.Option>
@@ -190,8 +189,8 @@ const ProductPage = () => {
             onSelect={onSelectCategory}
             placeholder="Select Category"
             showSearch
-            optionFilterProp="label"
             allowClear
+            optionFilterProp="label"
           >
             {category.map((item, index) => (
               <Select.Option label={item.Name} key={index} value={item.Id}>
@@ -217,7 +216,7 @@ const ProductPage = () => {
         dataSource={list}
         pagination={{
           pageSize: 5,
-          total: 100,
+          // total: 100,
         }}
         columns={[
           {

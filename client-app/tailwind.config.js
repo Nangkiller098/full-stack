@@ -1,6 +1,9 @@
 import withMT from "@material-tailwind/react/utils/withMT";
 
 export default withMT({
+  corePlugins: {
+    preflight: false,
+  },
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",

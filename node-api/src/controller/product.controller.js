@@ -3,7 +3,23 @@ const db = require("../config/db");
 
 const getList = async (req, res) => {
   try {
-    const [list] = await db.query("SELECT * FROM product ");
+    var { txt_search, status, category_id } = req.query;
+    var sql = "SELECT * FROM product WHERE 1=1";
+    var param = {};
+    if (!validation(txt_search)) {
+      sql += " AND Name LIKE  :txt_search ";
+      param["txt_search"] = "%" + txt_search + "%";
+    }
+    if (!validation(status)) {
+      sql += " AND Status =:status";
+      param["status"] = status;
+    }
+    if (!validation(category_id)) {
+      sql += " AND CategoryId = :category_id ";
+      param["category_id"] = "%" + category_id + "%";
+    }
+    const [list] = await db.query(sql, param);
+
     const [category] = await db.query("SELECT * FROM category");
     res.json({
       list: list,
@@ -86,7 +102,7 @@ const update = async (req, res) => {
     if (req.file) {
       Image = req.file.filename; // change image | new image
     } else {
-      Image = req.body.Image; // get Old image
+      Image = req.body.PreImage; // get Old image
     }
 
     var message = {};

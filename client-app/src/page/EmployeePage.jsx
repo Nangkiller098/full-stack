@@ -36,7 +36,7 @@ const EmployeePage = () => {
   const filterRef = useRef({
     txt_search: "",
     status: "",
-    role_id: "",
+    role_id: "All",
   });
 
   const getList = async () => {
@@ -146,8 +146,8 @@ const EmployeePage = () => {
           <Select
             onChange={onChangeStatus}
             placeholder="Status"
-            allowClear
             style={{ width: 120 }}
+            defaultValue={"1"}
           >
             <Select.Option value="1">Active</Select.Option>
             <Select.Option value="0">InActive</Select.Option>
@@ -157,8 +157,11 @@ const EmployeePage = () => {
             placeholder="Select Role"
             showSearch
             optionFilterProp="label"
-            allowClear
+            defaultValue={"All"}
           >
+            <Select.Option label="All" value="All">
+              All
+            </Select.Option>
             {role.map((item, index) => (
               <Select.Option label={item.Name} key={index} value={item.Id}>
                 {item.Name}

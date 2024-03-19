@@ -10,7 +10,6 @@ import {
   Select,
   message,
   Tag,
-  Flex,
   Typography,
   Segmented,
 } from "antd";
@@ -121,19 +120,21 @@ const RolePage = () => {
       <Typography>
         <Title level={1}>Manage Role</Title>
       </Typography>
-      <Flex gap="small" vertical justify="space-between">
+      <div className="flex 2xl:flex-row flex-col gap-2 justify-start">
         <Input.Search
           allowClear
           onChange={onChangeSearch}
           placeholder="Name or Code"
           onSearch={onTextSearch}
-          size=""
+          size="large"
+          className="2xl:w-96"
         />
         <Select
           size="large"
           onChange={onChangeStatus}
           placeholder="Status"
           allowClear
+          className="2xl:w-56"
         >
           <Select.Option value={"1"}>Active</Select.Option>
           <Select.Option value={"0"}>InActive</Select.Option>
@@ -148,7 +149,7 @@ const RolePage = () => {
         >
           New
         </Button>
-      </Flex>
+      </div>
       <Segmented />
       <Table
         className="table"
@@ -204,10 +205,15 @@ const RolePage = () => {
             dataIndex: "Status",
             render: (value, item) => (
               <Space>
-                <Button onClick={() => onClickBtnEdit(item)} type="primary">
+                <Button
+                  size="large"
+                  onClick={() => onClickBtnEdit(item)}
+                  type="primary"
+                >
                   Edit
                 </Button>
                 <Button
+                  size="large"
                   onClick={() => onClickBtnDelete(item)}
                   type="primary"
                   danger

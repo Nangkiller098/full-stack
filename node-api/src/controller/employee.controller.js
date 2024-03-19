@@ -90,8 +90,12 @@ const getlist = async (req, res) => {
       param["status"] = status;
     }
     if (!validation(role_id)) {
-      sql += " AND e.RoleId =:role_id";
-      param["role_id"] = role_id;
+      if (role_id == "All") {
+        param["role_id"] = role_id;
+      } else {
+        sql += " AND e.RoleId =:role_id";
+        param["role_id"] = role_id;
+      }
     }
     sql += " ORDER BY Id DESC";
     const [list] = await db.query(sql, param);

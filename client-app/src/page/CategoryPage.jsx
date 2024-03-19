@@ -10,11 +10,12 @@ import {
   Select,
   message,
   Tag,
-  DatePicker,
+  Typography,
 } from "antd";
 import { formartDateClient } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 
+const { Title } = Typography;
 const CategoryPage = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -110,42 +111,38 @@ const CategoryPage = () => {
 
   return (
     <MainPage loading={loading}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          paddingBottom: 10,
-        }}
-      >
-        <Space>
-          <div className="txt_title">Category</div>
-          <Input.Search
-            allowClear
-            onChange={onChangeSearch}
-            placeholder="Name or Code"
-          />
-          <Select
-            onChange={onChangeStatus}
-            placeholder="Status"
-            allowClear
-            style={{ width: 120 }}
-          >
-            <Select.Option value={"1"}>Active</Select.Option>
-            <Select.Option value={"0"}>InActive</Select.Option>
-          </Select>
-          <DatePicker />
-          <DatePicker />
-        </Space>
-
+      <Typography>
+        <Title level={3}>Manage Category</Title>
+      </Typography>
+      <div className="flex 2xl:flex-row flex-col gap-2 justify-start">
+        <Input.Search
+          allowClear
+          onChange={onChangeSearch}
+          placeholder="Name or Code"
+          size="large"
+          className="2xl:w-96"
+        />
+        <Select
+          onChange={onChangeStatus}
+          placeholder="Status"
+          className="2xl:w-36"
+          size="large"
+          defaultValue={"1"}
+        >
+          <Select.Option value={"1"}>Active</Select.Option>
+          <Select.Option value={"0"}>InActive</Select.Option>
+        </Select>
         <Button
           onClick={() => {
             setOpen(true);
           }}
           type="primary"
+          size="large"
         >
           New
         </Button>
       </div>
+
       <Table
         rowKey="Id"
         dataSource={list}
@@ -160,6 +157,7 @@ const CategoryPage = () => {
             title: "No",
             dataIndex: "Name",
             render: (value, item, index) => index + 1,
+            responsive: ["sm"],
           },
           {
             key: "Name",
@@ -170,11 +168,13 @@ const CategoryPage = () => {
             key: "Description",
             title: "Description",
             dataIndex: "Description",
+            responsive: ["sm"],
           },
           {
             key: "Status",
             title: "Status",
             dataIndex: "Status",
+            responsive: ["md"],
             render: (value) =>
               value == 1 ? (
                 <Tag color="green">Actived</Tag>
@@ -187,6 +187,7 @@ const CategoryPage = () => {
             title: "CreateAt",
             dataIndex: "CreateAt",
             render: (value) => formartDateClient(value),
+            responsive: ["md"],
           },
           {
             key: "Action",
@@ -194,10 +195,15 @@ const CategoryPage = () => {
             dataIndex: "Status",
             render: (value, item) => (
               <Space>
-                <Button onClick={() => onClickBtnEdit(item)} type="primary">
+                <Button
+                  size="large"
+                  onClick={() => onClickBtnEdit(item)}
+                  type="primary"
+                >
                   Edit
                 </Button>
                 <Button
+                  size="large"
                   onClick={() => onClickBtnDelete(item)}
                   type="primary"
                   danger

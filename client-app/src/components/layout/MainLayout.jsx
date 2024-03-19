@@ -5,11 +5,12 @@ import {
   TeamOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme, Typography } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getUser, isLogin, logout } from "../../config/helper";
-const { Header, Content, Sider } = Layout;
+const { Header, Content, Sider, Footer } = Layout;
 
+const { Title } = Typography;
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -62,11 +63,7 @@ const MainLayout = () => {
   }
 
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-      }}
-    >
+    <Layout>
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -101,14 +98,14 @@ const MainLayout = () => {
               <div
                 style={{ height: 40, width: 40, backgroundColor: "#888" }}
               ></div>
-              <div>Brand Name</div>
+              <Typography>
+                <Title level={2}>NIT Company</Title>
+              </Typography>
             </div>
             <div style={{ display: "flex" }}>
-              <div>
-                <div>
-                  {user?.Firstname}-{user?.Lastname}
-                </div>
-              </div>
+              <Title level={4} type="success">
+                {user?.Firstname}-{user?.Lastname}
+              </Title>
               <div
                 style={{
                   height: 40,
@@ -135,6 +132,13 @@ const MainLayout = () => {
             <Outlet />
           </div>
         </Content>
+        <Footer
+          style={{
+            textAlign: "center",
+          }}
+        >
+          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+        </Footer>
       </Layout>
     </Layout>
   );

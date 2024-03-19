@@ -1,8 +1,0 @@
-[2024-03-19 15:59:44]  TypeError: Cannot read properties of undefined (reading 'filename')
-
-[2024-03-19 15:59:48]  TypeError: Cannot read properties of undefined (reading 'filename')
-
-[2024-03-19 16:00:55]  TypeError: Cannot read properties of undefined (reading 'Image')
-
-[2024-03-19 16:00:56]  TypeError: Cannot read properties of undefined (reading 'Image')
-
