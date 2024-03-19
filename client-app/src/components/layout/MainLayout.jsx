@@ -68,6 +68,8 @@ const MainLayout = () => {
       }}
     >
       <Sider
+        breakpoint="lg"
+        collapsedWidth="0"
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}

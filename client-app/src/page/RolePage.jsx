@@ -10,11 +10,14 @@ import {
   Select,
   message,
   Tag,
-  DatePicker,
+  Flex,
+  Typography,
+  Segmented,
 } from "antd";
 import { formartDateClient } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 
+const { Title } = Typography;
 const RolePage = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -115,44 +118,40 @@ const RolePage = () => {
 
   return (
     <MainPage loading={loading}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          paddingBottom: 10,
-        }}
-      >
-        <Space>
-          <div className="txt_title">role</div>
-          <Input.Search
-            allowClear
-            onChange={onChangeSearch}
-            placeholder="Name or Code"
-            onSearch={onTextSearch}
-          />
-          <Select
-            onChange={onChangeStatus}
-            placeholder="Status"
-            allowClear
-            style={{ width: 120 }}
-          >
-            <Select.Option value={"1"}>Active</Select.Option>
-            <Select.Option value={"0"}>InActive</Select.Option>
-          </Select>
-          <DatePicker />
-          <DatePicker />
-        </Space>
+      <Typography>
+        <Title level={1}>Manage Role</Title>
+      </Typography>
+      <Flex gap="small" vertical justify="space-between">
+        <Input.Search
+          allowClear
+          onChange={onChangeSearch}
+          placeholder="Name or Code"
+          onSearch={onTextSearch}
+          size=""
+        />
+        <Select
+          size="large"
+          onChange={onChangeStatus}
+          placeholder="Status"
+          allowClear
+        >
+          <Select.Option value={"1"}>Active</Select.Option>
+          <Select.Option value={"0"}>InActive</Select.Option>
+        </Select>
 
         <Button
           onClick={() => {
             setOpen(true);
           }}
+          size="large"
           type="primary"
         >
           New
         </Button>
-      </div>
+      </Flex>
+      <Segmented />
       <Table
+        className="table"
         rowKey="Id"
         dataSource={list}
         pagination={{
@@ -166,6 +165,7 @@ const RolePage = () => {
             title: "No",
             dataIndex: "Name",
             render: (value, item, index) => index + 1,
+            responsive: ["sm"],
           },
           {
             key: "Name",
@@ -176,23 +176,27 @@ const RolePage = () => {
             key: "Code",
             title: "Code",
             dataIndex: "Code",
+            responsive: ["md"],
           },
           {
             key: "Status",
             title: "Status",
             dataIndex: "Status",
+
             render: (value) =>
               value == 1 ? (
                 <Tag color="green">Actived</Tag>
               ) : (
                 <Tag color="red">InActived</Tag>
               ),
+            responsive: ["md"],
           },
           {
             key: "CreateAt",
             title: "CreateAt",
             dataIndex: "CreateAt",
             render: (value) => formartDateClient(value),
+            responsive: ["md"],
           },
           {
             key: "Action",
