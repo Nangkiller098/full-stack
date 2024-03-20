@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import {
   DesktopOutlined,
-  PieChartOutlined,
+  AppstoreAddOutlined,
   TeamOutlined,
   UserOutlined,
+  ProductOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, theme, Typography } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -20,11 +22,12 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem("Dashboard", "/", <PieChartOutlined />),
-  getItem("Customer", "customer", <DesktopOutlined />),
-  getItem("Employee", "employee", <DesktopOutlined />),
-  getItem("Product", "Product", <TeamOutlined />, [
-    getItem("Product", "product"),
+  getItem("Dashboard", "/", <AppstoreAddOutlined />),
+  getItem("Customer", "customer", <TeamOutlined />),
+  getItem("Employee", "employee", <TeamOutlined />),
+  getItem("POS", "pos", <ShopOutlined />),
+  getItem("Product", "Product", <ProductOutlined />, [
+    getItem("Product", "product", <ProductOutlined />),
     getItem("Product-stock", "product-stock"),
     getItem("Category", "category"),
   ]),

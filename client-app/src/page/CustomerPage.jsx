@@ -102,7 +102,7 @@ const CustomerPage = () => {
     }
   };
   const onTextSearch = (e) => {
-    filterRef.current.txt_search = !e.target.value || null;
+    filterRef.current.txt_search = e.target;
     getList();
   };
   const onChangeSearch = (e) => {
@@ -143,6 +143,8 @@ const CustomerPage = () => {
             onChange={onChangeStatus}
             placeholder="Status"
             style={{ width: 120 }}
+            defaultValue={"1"}
+            allowClear
           >
             <Select.Option value="1">Active</Select.Option>
             <Select.Option value="0">InActive</Select.Option>

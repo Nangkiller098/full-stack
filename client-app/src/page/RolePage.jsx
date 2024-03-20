@@ -103,8 +103,8 @@ const RolePage = () => {
     filterRef.current.txt_search = e.target.value;
     getList();
   };
-  const onChangeStatus = (value) => {
-    filterRef.current.status = value;
+  const onChangeStatus = (e) => {
+    filterRef.current.status = e;
     getList();
   };
   const onCloseModal = () => {

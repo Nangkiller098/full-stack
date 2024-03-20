@@ -64,7 +64,7 @@ const ProductPage = () => {
     formCat.setFieldsValue({
       ...item,
       Status: item.Status === null ? "0" : item.Status + "",
-      CategoryId: item.CategoryId === null ? "" : item.CategoryId + "",
+      CategoryId: item.CategoryId === null ? "" : item.CategoryId,
       Image: item.Image,
     });
     setFilePreview(Config.image_path + item.Image);
@@ -118,9 +118,9 @@ const ProductPage = () => {
     }
   };
 
-  const onTextSearch = (e) => {
-    filterRef.current.txt_search = e.target.value;
-    getList();
+  const onTextSearch = () => {
+    // filterRef.current.txt_search = e.target;
+    // getList();
   };
 
   const onChangeSearch = (e) => {
@@ -180,8 +180,11 @@ const ProductPage = () => {
             onChange={onChangeStatus}
             placeholder="Status"
             style={{ width: 120 }}
-            defaultValue={"1"}
+            allowClear
           >
+            <Select.Option value="All" label="All">
+              All
+            </Select.Option>
             <Select.Option value="1">Active</Select.Option>
             <Select.Option value="0">InActive</Select.Option>
           </Select>
@@ -189,9 +192,11 @@ const ProductPage = () => {
             onSelect={onSelectCategory}
             placeholder="Select Category"
             showSearch
-            allowClear
             optionFilterProp="label"
           >
+            <Select.Option value="All" label="All">
+              All
+            </Select.Option>
             {category.map((item, index) => (
               <Select.Option label={item.Name} key={index} value={item.Id}>
                 {item.Name}
@@ -229,6 +234,11 @@ const ProductPage = () => {
             key: "Name",
             title: "Name",
             dataIndex: "Name",
+          },
+          {
+            key: "CategoryName",
+            title: "CategoryName",
+            dataIndex: "CategoryName",
           },
           {
             key: "Description",

@@ -101,7 +101,7 @@ const EmployeePage = () => {
     }
   };
   const onTextSearch = (e) => {
-    filterRef.current.txt_search = e.target.value;
+    filterRef.current.txt_search = e.target;
     getList();
   };
   const onChangeSearch = (e) => {

@@ -12,6 +12,7 @@ import RolePage from "./page/RolePage";
 import EmployeePage from "./page/EmployeePage";
 import CustomerPage from "./page/CustomerPage";
 import ProductPage from "./page/ProductPage";
+import POSPage from "./page/POSPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<Homepage />} />
             <Route path="/customer" element={<CustomerPage />} />
+            <Route path="/pos" element={<POSPage />} />
             <Route path="/employee" element={<EmployeePage />} />
             <Route path="/product" element={<ProductPage />} />
             <Route path="/product-stock" element={<h1>product stock</h1>} />

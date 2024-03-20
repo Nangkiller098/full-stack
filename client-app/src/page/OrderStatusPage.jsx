@@ -94,7 +94,7 @@ const OrderStatusPage = () => {
     }
   };
   const onTextSearch = (e) => {
-    filterRef.current.txt_search = e.target.value;
+    filterRef.current.txt_search = e;
     getList();
   };
   const onChangeSearch = (e) => {
@@ -105,6 +105,7 @@ const OrderStatusPage = () => {
     filterRef.current.status = value;
     getList();
   };
+
   const onCloseModal = () => {
     formCat.resetFields();
     formCat.setFieldsValue({
