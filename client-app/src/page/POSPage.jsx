@@ -27,6 +27,9 @@ const POSPage = () => {
   // const [open, setOpen] = useState(false);
   const [formCat] = Form.useForm();
   // const [fileSelected, setFileSelected] = useState(null); // past to api
+  const [subTotal, setSubTotal] = useState(0);
+  const [totalDiscount, setTotalDiscount] = useState(0);
+  const [totalToPay, setTtotalToPay] = useState(0);
 
   useEffect(() => {
     formCat.setFieldsValue({
@@ -76,7 +79,22 @@ const POSPage = () => {
           listTmp = [...list, ...listTmp]; //concat arry
         }
 
+        //find total to pay
+        //find total discount
+        var findSubTotal = 0,
+          findTotalDiscountPrice = 0,
+          findTotalToPay = 0;
+        listTmp.map((item) => {
+          findSubTotal += Number(item.QtyOrder * item.Price);
+          var Dis = item.Discount == null ? 0 : Number(item.Discount);
+          findTotalDiscountPrice +=
+            ((Number(item.QtyOrder) + item.Price) * Dis) / 100;
+          findTotalToPay += findSubTotal - findTotalDiscountPrice;
+        });
         setList(listTmp);
+        setSubTotal(findSubTotal);
+        setTotalDiscount(findTotalDiscountPrice);
+        setTtotalToPay(findTotalToPay);
       }
     }
   };
@@ -212,9 +230,23 @@ const POSPage = () => {
                 dataIndex: "Price",
               },
               {
-                key: "Discount",
-                title: "Discount",
+                key: "Dis",
+                title: "Dis",
                 dataIndex: "Discount",
+              },
+              {
+                key: "Total",
+                title: "Total",
+                render: (value, items) => {
+                  let QtyOrder = items.QtyOrder;
+                  let Price = items.Price;
+                  let Dis = items.Discount == null ? 0 : items.Discount;
+                  let DiscountPrice = (QtyOrder * Price * Dis) / 100;
+                  // let Total = Price;
+                  var Total = QtyOrder * Price - DiscountPrice;
+                  // var Total = 3333;
+                  return Total;
+                },
               },
               {
                 key: "Image",
@@ -324,17 +356,17 @@ const POSPage = () => {
 
             <div className="flex justify-between p-2">
               <div>Sub Total</div>
-              <div>1000$</div>
+              <div>{subTotal}$</div>
             </div>
 
             <div className="flex justify-between p-2">
               <div>Discount</div>
-              <div>100$</div>
+              <div>{totalDiscount}$</div>
             </div>
 
             <div className="flex justify-between p-2">
               <div>Total</div>
-              <div>900$</div>
+              <div>{totalToPay}$</div>
             </div>
 
             <Form.Item style={{ textAlign: "right" }}>

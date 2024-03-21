@@ -48,23 +48,17 @@ const searchProduct = async (req, res) => {
 
 const checkout = async (req, res) => {
   try {
-    var { Name, CategoryId, Description, Qty, Price, Discount, Status } =
-      req.body;
-
-    var Image = null;
-    if (req.file) {
-      Image = req.file.filename;
-    }
+    var { CustomerId, PaymentMetodId, Product, TotalPaid } = req.body;
 
     var message = {};
-    if (validation(Name)) {
-      message.Name = "Name is require.";
+    if (validation(CustomerId)) {
+      message.CustomerId = "CustomerId is require.";
     }
-    if (validation(Qty)) {
-      message.Qty = "Qty is require.";
+    if (validation(PaymentMetodId)) {
+      message.PaymentMetodId = "PaymentMetodId is require.";
     }
-    if (validation(Price)) {
-      message.Price = "Price is require.";
+    if (Product.length == 0) {
+      message.Product = "Product is require Please Add Product.";
     }
 
     if (Object.keys(message).length > 0) {
@@ -74,23 +68,37 @@ const checkout = async (req, res) => {
       });
       return false;
     }
-    var sql =
-      "INSERT INTO product (CategoryId, Name ,Description, Qty, Price, Discount, Image, Status) VALUES (:CategoryId, :Name, :Description, :Qty, :Price, :Discount, :Image, :Status)";
-    var param = {
-      CategoryId,
-      Name,
-      Description,
-      Qty,
-      Price,
-      Discount,
-      Image,
-      Status,
-    };
-    const [data] = await db.query(sql, param);
+
+    //find invoice
+    var sqlInvoice =
+      "INSERT INTO invoice" +
+      " (CustomerId,EmployeeId,OrderStatusId,PaymentMethodId,TotalQty,TotalAmount,TotalPaid)" +
+      "VALUES" +
+      "(:CustomerId,:EmployeeId,:OrderStatusId,:PaymentMethodId,:TotalQty,:TotalAmount,:TotalPaid)";
+
+    var TotalQty, TotalAmmount, TotalPaid;
+    var IdProducts = "(1,2,3,4)";
+
+    //find productsorder by product id
+    var sqlFIndProductOrder = "SELECT * FROM Product WHERE Id IN :IdProducts";
+    const [data] = await db.query(sqlFIndProductOrder, { IdProducts });
     res.json({
-      message: "Create successfully",
-      data,
+      data: data,
     });
+    Product.map((item, index) => {});
+    var sqlInvoiceParam = {
+      CustomerId: CustomerId,
+      PaymentMetodId: PaymentMetodId,
+      EmployeeId: 1,
+      OrderStatusId: 4,
+      TotalQty: TotalQty,
+      TotalAmount: TotalAmmount,
+      TotalPaid: TotalPaid,
+    };
+    //insert invoice
+    //inser invoice_delete
+    //re stock in product
+    //checkout sucess
   } catch (err) {
     logError("product.create", err, res);
   }

@@ -159,6 +159,7 @@ const ProductPage = () => {
     setFilePreview(null);
     setFileSelected(null);
   };
+  
   return (
     <MainPage loading={loading}>
       <div
