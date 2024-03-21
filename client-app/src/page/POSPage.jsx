@@ -13,62 +13,73 @@ import {
   Tag,
   Row,
   Col,
-  InputNumber,
 } from "antd";
-import { Config } from "../config/helper";
+import { Config, isEmptyOrNull } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 import { DeleteOutlined } from "@ant-design/icons";
 const POSPage = () => {
   const [list, setList] = useState([]);
-  const [category, setCategory] = useState([]);
+  // const [category, setCategory] = useState([]);
+  const [customer, setCustomer] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState([]);
 
   const [loading, setLoading] = useState(false);
   // const [open, setOpen] = useState(false);
   const [formCat] = Form.useForm();
   // const [fileSelected, setFileSelected] = useState(null); // past to api
-  // const [filePreview, setFilePreview] = useState(null);
 
   useEffect(() => {
     formCat.setFieldsValue({
       Status: "1",
     });
-    getList();
+    initInfo();
   }, [formCat]);
 
   const filterRef = useRef({
     txt_search: "",
-    status: "",
-    category_id: "",
   });
 
   // const fileRef = useRef(null);
 
-  const getList = async () => {
+  const initInfo = async () => {
     setLoading(true);
-    var param = {
-      txt_search: filterRef.current.txt_search,
-      status: filterRef.current.status,
-      category_id: filterRef.current.category_id,
-    };
-    const res = await request("product/getlist", "get", param);
+    const res = await request("pos/initInfo", "get");
     setLoading(false);
     if (res) {
-      setList(res.list);
-      setCategory(res.category);
+      setCustomer(res.customer);
+      setPaymentMethod(res.order_payment_method);
     }
   };
 
-  // const onClickBtnEdit = (item) => {
-  //   formCat.setFieldsValue({
-  //     ...item,
-  //     Status: item.Status === null ? "0" : item.Status + "",
-  //     CategoryId: item.CategoryId === null ? "" : item.CategoryId + "",
-  //     Image: item.Image,
-  //   });
-  //   setFilePreview(Config.image_path + item.Image);
-  //   setOpen(true);
-  // };
+  const getList = async () => {
+    if (isEmptyOrNull(filterRef.current.txt_search)) {
+      return;
+    }
+    setLoading(true);
+    var param = {
+      txt_search: filterRef.current.txt_search,
+    };
+    const res = await request("pos/searchProduct", "get", param);
+    setLoading(false);
+    if (res) {
+      if (res.list.length == 0) {
+        message.error("Product not Found");
+      } else {
+        var listTmp = res.list;
+        listTmp[0]["QtyOrder"] = 1; //create new key qty
+        var indexFind = list.findIndex((item) => item.Id == listTmp[0].Id);
+        if (indexFind >= 0) {
+          // update qty order with current item
+          listTmp = list;
+          listTmp[indexFind].QtyOrder = listTmp[indexFind].QtyOrder + 1;
+        } else {
+          listTmp = [...list, ...listTmp]; //concat arry
+        }
 
+        setList(listTmp);
+      }
+    }
+  };
   const onClickBtnDelete = async (item) => {
     Modal.confirm({
       title: "Delete",
@@ -90,39 +101,31 @@ const POSPage = () => {
     });
   };
 
-  // const onFinish = async (item) => {
-  //   var Id = formCat.getFieldValue("Id");
-  //   var form = new FormData();
-  //   form.append("Id", Id);
-  //   form.append("Name", item.Name);
-  //   form.append("Description", item.Description);
-  //   form.append("Qty", item.Qty);
-  //   form.append("Price", item.Price);
-  //   form.append("Discount", item.Discount);
-  //   form.append("CategoryId", item.CategoryId);
-  //   form.append("Status", item.Status);
-  //   form.append("PreImage", formCat.getFieldValue("Image"));
+  const onFinish = async (item) => {
+    var Id = formCat.getFieldValue("Id");
+    var form = new FormData();
+    form.append("Id", Id);
+    form.append("Name", item.Name);
+    form.append("Description", item.Description);
+    form.append("Qty", item.Qty);
+    form.append("Price", item.Price);
+    form.append("Discount", item.Discount);
+    form.append("CategoryId", item.CategoryId);
+    form.append("Status", item.Status);
+    form.append("PreImage", formCat.getFieldValue("Image"));
 
-  //   if (fileSelected != null) {
-  //     form.append("image", fileSelected);
-  //   }
-  //   var method = Id == null ? "post" : "put";
-  //   const url = Id == null ? "product/create" : "product/update";
-  //   const res = await request(url, method, form);
-  //   if (res) {
-  //     message.success(res.message);
-  //     getList();
-  //     onCloseModal();
-  //   }
-  // };
-
-  const onTextSearch = () => {
-    // filterRef.current.txt_search = e.target;
-    // getList();
+    var method = Id == null ? "post" : "put";
+    const url = Id == null ? "product/create" : "product/update";
+    const res = await request(url, method, form);
+    if (res) {
+      message.success(res.message);
+      getList();
+      // onCloseModal();
+    }
   };
 
-  const onChangeSearch = (e) => {
-    filterRef.current.txt_search = e.target.value;
+  const onTextSearch = (e) => {
+    filterRef.current.txt_search = e;
     getList();
   };
 
@@ -137,21 +140,8 @@ const POSPage = () => {
   //     Status: "1",
   //   });
   //   setOpen(false);
-  //   onRemoveFileSelected();
   // };
 
-  // const onChangeFile = (e) => {
-  //   var file = e.target.files[0];
-  //   var filePreview = URL.createObjectURL(file);
-  //   setFileSelected(file);
-  //   setFilePreview(filePreview);
-  // };
-
-  // const onRemoveFileSelected = () => {
-  //   fileRef.current.value = null;
-  //   setFilePreview(null);
-  //   setFileSelected(null);
-  // };
   return (
     <MainPage loading={loading}>
       <div
@@ -163,32 +153,24 @@ const POSPage = () => {
       >
         <Space>
           <div className="txt_title">Product</div>
+
           <Input.Search
             allowClear
-            onChange={onChangeSearch}
-            placeholder="Name or Code"
             onSearch={onTextSearch}
+            placeholder="Name or Code"
+            size="large"
           />
-          <Select
-            onSelect={onSelectCategory}
-            placeholder="Select Category"
-            showSearch
-            optionFilterProp="label"
-          >
-            <Select.Option value="All" label="All">
-              All
-            </Select.Option>
-            {category.map((item, index) => (
-              <Select.Option label={item.Name} key={index} value={item.Id}>
-                {item.Name}
-              </Select.Option>
-            ))}
-          </Select>
+
+          <Button type="primary" size="large">
+            Clear
+          </Button>
         </Space>
       </div>
+
       <Row gutter={15}>
         <Col span={16}>
           <Table
+            className=" justify-center"
             rowKey={"Id"}
             dataSource={list}
             pagination={{
@@ -197,12 +179,6 @@ const POSPage = () => {
             }}
             columns={[
               {
-                key: "No",
-                title: "No",
-                dataIndex: "Name",
-                render: (value, item, index) => index + 1,
-              },
-              {
                 key: "Name",
                 title: "Name",
                 dataIndex: "Name",
@@ -210,8 +186,7 @@ const POSPage = () => {
                   return (
                     <>
                       <div>
-                        {index + 1}
-                        {item.Name}
+                        {index + 1} {item.Name}
                       </div>
                       <div>
                         <Tag
@@ -227,9 +202,9 @@ const POSPage = () => {
                 },
               },
               {
-                key: "Qty",
+                key: "QtyOrder",
                 title: "Qty",
-                dataIndex: "Qty",
+                dataIndex: "QtyOrder",
               },
               {
                 key: "Price",
@@ -278,6 +253,7 @@ const POSPage = () => {
                       onClick={() => onClickBtnDelete(item)}
                       type="primary"
                       danger
+                      size="large"
                     >
                       <DeleteOutlined />
                     </Button>
@@ -287,43 +263,87 @@ const POSPage = () => {
             ]}
           />
         </Col>
-        <Col span={8}>
-          <Form form={formCat} layout="vertical">
-            <Row gutter={5}>
-              <Col span={12}>
-                <Form.Item
-                  label="Qty"
-                  name={"Qty"}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please fil in Qty!",
-                    },
-                  ]}
-                >
-                  <InputNumber style={{ width: "100%" }} placeholder="Qty" />
-                </Form.Item>
-              </Col>
+        <Col span={8} className=" bg-gray-200">
+          <Form form={formCat} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Customer"
+              name={"Customer"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please fil in Customer!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select Customer"
+                showSearch
+                optionFilterProp="label"
+                size="large"
+                className="w-full"
+              >
+                <Select.Option value="All" label="All Category">
+                  All Customer
+                </Select.Option>
+                {customer.map((item, index) => (
+                  <Select.Option label={item.Tel} key={index} value={item.Id}>
+                    {item.Firstname} {item.Lastname} {item.Tel}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-              <Col span={12}>
-                <Form.Item
-                  label="Price"
-                  name={"Price"}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input Price!",
-                    },
-                  ]}
-                >
-                  <InputNumber placeholder="Price" style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
+            <Form.Item
+              label="Payment Method"
+              name={"Payment Method"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please input Payment Method!",
+                },
+              ]}
+            >
+              <Select
+                onSelect={onSelectCategory}
+                placeholder="Select Category"
+                showSearch
+                optionFilterProp="label"
+                size="large"
+                className="w-full"
+              >
+                <Select.Option value="All" label="All Category">
+                  All Category
+                </Select.Option>
+                {paymentMethod.map((item, index) => (
+                  <Select.Option label={item.Name} key={index} value={item.Id}>
+                    {item.Name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-              <Col>
-                
-              </Col>
-            </Row>
+            <div className="flex justify-between p-2">
+              <div>Sub Total</div>
+              <div>1000$</div>
+            </div>
+
+            <div className="flex justify-between p-2">
+              <div>Discount</div>
+              <div>100$</div>
+            </div>
+
+            <div className="flex justify-between p-2">
+              <div>Total</div>
+              <div>900$</div>
+            </div>
+
+            <Form.Item style={{ textAlign: "right" }}>
+              <Space>
+                <Button type="primary" htmlType="submit" size="large">
+                  Check Out
+                </Button>
+              </Space>
+            </Form.Item>
           </Form>
         </Col>
       </Row>
@@ -334,7 +354,7 @@ const POSPage = () => {
           formCat.getFieldValue("Id") == null ? "New product" : "Update product"
         }
         open={open}
-        onCancel={onCloseModal}
+        onCancel={tru}
         footer={null}
         closable={false}
         allowClear

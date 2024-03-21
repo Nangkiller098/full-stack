@@ -1,0 +1,12 @@
+[2024-03-21 15:41:28]  Error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'Name LIKE '%1%'' at line 1
+
+[2024-03-21 15:41:29]  Error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'Name LIKE '%12%'' at line 1
+
+[2024-03-21 15:41:29]  Error: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'Name LIKE '%123%'' at line 1
+
+[2024-03-21 15:42:06]  Error: Table 'full_stack.categor' doesn't exist
+
+[2024-03-21 15:42:06]  Error: Table 'full_stack.categor' doesn't exist
+
+[2024-03-21 15:42:06]  Error: Table 'full_stack.categor' doesn't exist
+

@@ -3,10 +3,12 @@ const app = express();
 const cors = require("cors");
 app.use(express.json());
 
-app.use(cors({
-  "origin":"*",
-  "methods":"GET,HEAD,PUT,PATCH,POST,DELETE"
-}));
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Hello world");
@@ -35,6 +37,9 @@ product(app);
 
 const supplier = require("./src/route/supplier.route");
 supplier(app);
+
+const pos = require("./src/route/pos.route");
+pos(app);
 
 const port = 8081;
 app.listen(port, () => {
