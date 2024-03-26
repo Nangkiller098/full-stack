@@ -47,20 +47,25 @@ const searchProduct = async (req, res) => {
 };
 
 const checkout = async (req, res) => {
+  var con = await db.getConnection();
   try {
-    var { CustomerId, PaymentMetodId, Product, TotalPaid } = req.body;
-
+    await con.beginTransaction();
+    var {
+      CustomerId,
+      PaymentMethodId,
+      TotalPaid,
+      Product, // [{},{}]
+    } = req.body;
     var message = {};
     if (validation(CustomerId)) {
-      message.CustomerId = "CustomerId is require.";
+      message.CustomerId = "CustomerId required!";
     }
-    if (validation(PaymentMetodId)) {
-      message.PaymentMetodId = "PaymentMetodId is require.";
+    if (validation(PaymentMethodId)) {
+      message.PaymentMethodId = "PaymentMethodId required!";
     }
     if (Product.length == 0) {
-      message.Product = "Product is require Please Add Product.";
+      message.Product = "Please Add Product to order!";
     }
-
     if (Object.keys(message).length > 0) {
       res.json({
         error: true,
@@ -68,40 +73,90 @@ const checkout = async (req, res) => {
       });
       return false;
     }
-
-    //find invoice
-    var sqlInvoice =
-      "INSERT INTO invoice" +
-      " (CustomerId,EmployeeId,OrderStatusId,PaymentMethodId,TotalQty,TotalAmount,TotalPaid)" +
-      "VALUES" +
-      "(:CustomerId,:EmployeeId,:OrderStatusId,:PaymentMethodId,:TotalQty,:TotalAmount,:TotalPaid)";
-
-    var TotalQty, TotalAmmount, TotalPaid;
-    var IdProducts = "(1,2,3,4)";
-
-    //find productsorder by product id
-    var sqlFIndProductOrder = "SELECT * FROM Product WHERE Id IN :IdProducts";
-    const [data] = await db.query(sqlFIndProductOrder, { IdProducts });
-    res.json({
-      data: data,
+    var TotalQty = 0;
+    var idProduct = [];
+    Product.map((item, index) => {
+      idProduct.push(item.Id);
+      TotalQty += item.QtyOrder;
     });
-    Product.map((item, index) => {});
+    idProduct.join(",").toString();
+    var sqlFindProductOrder = "SELECT * FROM Product WHERE Id IN (:idProduct) ";
+    const [data] = await db.query(sqlFindProductOrder, {
+      idProduct: idProduct,
+    });
+
+    var TotalAmount = 0;
+    data.map((item, index) => {
+      var QtyOrderTmp = 0;
+      Product.map((item1, index1) => {
+        if (item.Id == item1.Id) {
+          QtyOrderTmp = Number(item1.QtyOrder);
+          Product[index].Price = Number(item.Price);
+          Product[index].QtyOrder = Number(item1.QtyOrder);
+          Product[index].Discount = Number(item.Discount);
+        }
+      });
+      var DisPrice =
+        (QtyOrderTmp * Number(item.Price) * Number(item.Discount)) / 100;
+      TotalAmount += QtyOrderTmp * Number(item.Price) - DisPrice;
+    });
+    // CustomerId,EmployeeId,OrderStatusId,PaymentMethodId,TotalQty,TotalAmount,TotalPaid
+
+    var sqlInvoice =
+      "INSERT INTO invoice " +
+      " (CustomerId,EmployeeId,OrderStatusId,OrderPaymentMethodId,TotalQty,TotalAmount,TotalPaid) " +
+      " VALUES " +
+      " (:CustomerId,:EmployeeId,:OrderStatusId,:OrderPaymentMethodId,:TotalQty,:TotalAmount,:TotalPaid) ";
+    var OrderStatusId = TotalPaid < TotalAmount ? 3 : 4;
     var sqlInvoiceParam = {
       CustomerId: CustomerId,
-      PaymentMetodId: PaymentMetodId,
       EmployeeId: 1,
-      OrderStatusId: 4,
+      OrderStatusId: OrderStatusId,
+      OrderPaymentMethodId: PaymentMethodId,
       TotalQty: TotalQty,
-      TotalAmount: TotalAmmount,
+      TotalAmount: TotalAmount,
       TotalPaid: TotalPaid,
     };
-    //insert invoice
-    //inser invoice_delete
-    //re stock in product
-    //checkout sucess
+    var [dataInvoice] = await db.query(sqlInvoice, sqlInvoiceParam); // create invoice
+
+    Product.map(async (item, index) => {
+      // insert data to invoice details
+      var sqlInvoiceDetails =
+        " INSERT INTO invoice_details " +
+        " (InvoiceId,ProductId,Qty,Price,Discount) " +
+        " VALUES " +
+        " (:InvoiceId,:ProductId,:Qty,:Price,:Discount) ";
+      var sqlInvoiceDetailsParam = {
+        InvoiceId: dataInvoice.insertId,
+        ProductId: item.Id,
+        Qty: item.QtyOrder,
+        Price: item.Price,
+        Discount: item.Discount,
+      };
+      var [sqlInvoiceDetails] = await db.query(
+        sqlInvoiceDetails,
+        sqlInvoiceDetailsParam
+      );
+
+      // restok in product
+      var sqlProductStock =
+        " UPDATE product SET Qty=(Qty-:QtyOrder) WHERE Id = :Id ";
+      var sqlProductStockParam = {
+        QtyOrder: item.QtyOrder,
+        Id: item.Id,
+      };
+      var [sqlProductStock] = await db.query(
+        sqlProductStock,
+        sqlProductStockParam
+      );
+    });
+    await con.commit();
+    res.json({
+      message: "Order Success",
+    });
   } catch (err) {
-    logError("product.create", err, res);
+    await con.rollback();
+    logError("pos.checkout", err, res);
   }
 };
-
 module.exports = { initInfo, checkout, searchProduct };

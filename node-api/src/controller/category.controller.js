@@ -25,6 +25,32 @@ const getList = async (req, res) => {
     logError("category.getList", err, res);
   }
 };
+
+const create1 = async (req, res) => {
+  let con = await db.getConnection();
+  try {
+    await con.beginTransaction();
+    var sql =
+      "INSERT INTO category (Name,Description,Status) VALUES (:Name,:Description,:Status)";
+    var sql1 =
+      "INSERT1 INTO category (Name,Description,Status) VALUES (:Name,:Description,:Status)";
+    var param = {
+      Name: req.body.Name,
+      Description: req.body.Description,
+      Status: req.body.Status,
+    };
+    const [data] = await con.query(sql, param);
+    const [data1] = await con.query(sql1, param);
+    await con.commit();
+    res.json({
+      message: "Insert success",
+      data: data,
+    });
+  } catch (err) {
+    await con.rollback();
+    logError("category.create", err, res);
+  }
+};
 const getById = async (req, res) => {
   try {
     var param = {
@@ -94,4 +120,4 @@ const remove = async (req, res) => {
     logError("category.remove", error, res);
   }
 };
-module.exports = { getList, create, update, remove, getById };
+module.exports = { getList, create, update, remove, getById, create1 };

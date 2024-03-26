@@ -64,6 +64,7 @@ const POSPage = () => {
     };
     const res = await request("pos/searchProduct", "get", param);
     setLoading(false);
+
     if (res) {
       if (res.list.length == 0) {
         message.error("Product not Found");
@@ -88,7 +89,7 @@ const POSPage = () => {
           findSubTotal += Number(item.QtyOrder * item.Price);
           var Dis = item.Discount == null ? 0 : Number(item.Discount);
           findTotalDiscountPrice +=
-            ((Number(item.QtyOrder) + item.Price) * Dis) / 100;
+            (Number(item.QtyOrder) * item.Price * Dis) / 100;
           findTotalToPay += findSubTotal - findTotalDiscountPrice;
         });
         setList(listTmp);
@@ -110,7 +111,7 @@ const POSPage = () => {
         var data = {
           Id: item.Id,
         };
-        const res = await request("product/delete", "delete", data);
+        const res = await request("pos/delete", "delete", data);
         if (res) {
           message.success(res.message);
           getList();
@@ -119,25 +120,31 @@ const POSPage = () => {
     });
   };
 
-  const onFinish = async (item) => {
-    var Id = formCat.getFieldValue("Id");
-    var form = new FormData();
-    form.append("Id", Id);
-    form.append("Name", item.Name);
-    form.append("Description", item.Description);
-    form.append("Qty", item.Qty);
-    form.append("Price", item.Price);
-    form.append("Discount", item.Discount);
-    form.append("CategoryId", item.CategoryId);
-    form.append("Status", item.Status);
-    form.append("PreImage", formCat.getFieldValue("Image"));
-
-    var method = Id == null ? "post" : "put";
-    const url = Id == null ? "product/create" : "product/update";
-    const res = await request(url, method, form);
+  const onFinish = async () => {
+    var param = {
+      CustomerId: 1,
+      PaymentMethodId: 4,
+      TotalPaid: 2000,
+      Product: list,
+    };
+    const res = await request("pos/checkout", "post", param);
     if (res) {
-      message.success(res.message);
-      getList();
+      if (res.message) {
+        var mgs = "";
+        Object.keys(res.message).map((key) => {
+          mgs += `${key} : ${res.message[key]}`;
+        });
+        message.success(mgs);
+        setList([]);
+        setTtotalToPay(0);
+        setTotalDiscount(0);
+        setSubTotal(0);
+        formCat.resetFields();
+      } else {
+        message.error("Something went wrong");
+      }
+
+      // getList();
       // onCloseModal();
     }
   };
@@ -147,10 +154,10 @@ const POSPage = () => {
     getList();
   };
 
-  const onSelectCategory = (value) => {
-    filterRef.current.category_id = value;
-    getList();
-  };
+  // const onSelectCategory = (value) => {
+  //   filterRef.current.category_id = value;
+  //   getList();
+  // };
 
   // const onCloseModal = () => {
   //   formCat.resetFields();
@@ -314,9 +321,6 @@ const POSPage = () => {
                 size="large"
                 className="w-full"
               >
-                <Select.Option value="All" label="All Category">
-                  All Customer
-                </Select.Option>
                 {customer.map((item, index) => (
                   <Select.Option label={item.Tel} key={index} value={item.Id}>
                     {item.Firstname} {item.Lastname} {item.Tel}
@@ -336,16 +340,13 @@ const POSPage = () => {
               ]}
             >
               <Select
-                onSelect={onSelectCategory}
-                placeholder="Select Category"
+                // onSelect={onSelectCategory}
+                placeholder="Select Payment Method"
                 showSearch
                 optionFilterProp="label"
                 size="large"
                 className="w-full"
               >
-                <Select.Option value="All" label="All Category">
-                  All Category
-                </Select.Option>
                 {paymentMethod.map((item, index) => (
                   <Select.Option label={item.Name} key={index} value={item.Id}>
                     {item.Name}
