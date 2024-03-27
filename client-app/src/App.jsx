@@ -13,6 +13,7 @@ import EmployeePage from "./page/EmployeePage";
 import CustomerPage from "./page/CustomerPage";
 import ProductPage from "./page/ProductPage";
 import POSPage from "./page/POSPage";
+import InvoicePage from "./page/InvoicePage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/" element={<Homepage />} />
             <Route path="/customer" element={<CustomerPage />} />
             <Route path="/pos" element={<POSPage />} />
+            <Route path="/invoice" element={<InvoicePage />} />
             <Route path="/employee" element={<EmployeePage />} />
             <Route path="/product" element={<ProductPage />} />
             <Route path="/product-stock" element={<h1>product stock</h1>} />

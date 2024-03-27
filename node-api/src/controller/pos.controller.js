@@ -93,15 +93,18 @@ const checkout = async (req, res) => {
           QtyOrderTmp = Number(item1.QtyOrder);
           Product[index].Price = Number(item.Price);
           Product[index].QtyOrder = Number(item1.QtyOrder);
-          Product[index].Discount = Number(item.Discount);
+          Product[index].Discount = Number(item.Discount); 
         }
       });
+
+      //discount price
       var DisPrice =
         (QtyOrderTmp * Number(item.Price) * Number(item.Discount)) / 100;
+
       TotalAmount += QtyOrderTmp * Number(item.Price) - DisPrice;
     });
-    // CustomerId,EmployeeId,OrderStatusId,PaymentMethodId,TotalQty,TotalAmount,TotalPaid
 
+    // get data from fronend
     var sqlInvoice =
       "INSERT INTO invoice " +
       " (CustomerId,EmployeeId,OrderStatusId,OrderPaymentMethodId,TotalQty,TotalAmount,TotalPaid) " +
@@ -126,6 +129,7 @@ const checkout = async (req, res) => {
         " (InvoiceId,ProductId,Qty,Price,Discount) " +
         " VALUES " +
         " (:InvoiceId,:ProductId,:Qty,:Price,:Discount) ";
+
       var sqlInvoiceDetailsParam = {
         InvoiceId: dataInvoice.insertId,
         ProductId: item.Id,
@@ -133,6 +137,7 @@ const checkout = async (req, res) => {
         Price: item.Price,
         Discount: item.Discount,
       };
+
       var [sqlInvoiceDetails] = await db.query(
         sqlInvoiceDetails,
         sqlInvoiceDetailsParam
@@ -141,6 +146,7 @@ const checkout = async (req, res) => {
       // restok in product
       var sqlProductStock =
         " UPDATE product SET Qty=(Qty-:QtyOrder) WHERE Id = :Id ";
+
       var sqlProductStockParam = {
         QtyOrder: item.QtyOrder,
         Id: item.Id,

@@ -13,6 +13,7 @@ import {
   Tag,
   Row,
   Col,
+  InputNumber,
 } from "antd";
 import { Config, isEmptyOrNull } from "../config/helper";
 import MainPage from "../components/page/MainPage";
@@ -85,12 +86,18 @@ const POSPage = () => {
         var findSubTotal = 0,
           findTotalDiscountPrice = 0,
           findTotalToPay = 0;
+
         listTmp.map((item) => {
           findSubTotal += Number(item.QtyOrder * item.Price);
           var Dis = item.Discount == null ? 0 : Number(item.Discount);
+
+          //calculate discount price
           findTotalDiscountPrice +=
             (Number(item.QtyOrder) * item.Price * Dis) / 100;
-          findTotalToPay += findSubTotal - findTotalDiscountPrice;
+
+          //total to pay
+          findTotalToPay +=
+            Number(item.QtyOrder) * Number(item.Price) - findTotalDiscountPrice;
         });
         setList(listTmp);
         setSubTotal(findSubTotal);
@@ -120,21 +127,21 @@ const POSPage = () => {
     });
   };
 
-  const onFinish = async () => {
+  const onFinish = async (item) => {
     var param = {
-      CustomerId: 1,
-      PaymentMethodId: 4,
-      TotalPaid: 2000,
+      CustomerId: item.CustomerId,
+      PaymentMethodId: item.PaymentMethodId,
+      TotalPaid: item.PaidAmount,
       Product: list,
     };
     const res = await request("pos/checkout", "post", param);
     if (res) {
       if (res.message) {
-        var mgs = "";
-        Object.keys(res.message).map((key) => {
-          mgs += `${key} : ${res.message[key]}`;
-        });
-        message.success(mgs);
+        // var mgs = "";
+        // Object.keys(res.message).map((key) => {
+        //   mgs += `${key} : ${res.message[key]}`;
+        // });
+        message.success("Order Sucessfully Added");
         setList([]);
         setTtotalToPay(0);
         setTotalDiscount(0);
@@ -306,7 +313,7 @@ const POSPage = () => {
           <Form form={formCat} layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="Customer"
-              name={"Customer"}
+              name={"CustomerId"}
               rules={[
                 {
                   required: true,
@@ -331,7 +338,7 @@ const POSPage = () => {
 
             <Form.Item
               label="Payment Method"
-              name={"Payment Method"}
+              name={"PaymentMehodId"}
               rules={[
                 {
                   required: true,
@@ -369,7 +376,14 @@ const POSPage = () => {
               <div>Total</div>
               <div>{totalToPay}$</div>
             </div>
-
+            <Form.Item name="PaidAmount" style={{ textAlign: "right" }}>
+              <Space>
+                <InputNumber
+                  placeholder="Amount to Pay"
+                  style={{ width: "100%" }}
+                />
+              </Space>
+            </Form.Item>
             <Form.Item style={{ textAlign: "right" }}>
               <Space>
                 <Button type="primary" htmlType="submit" size="large">

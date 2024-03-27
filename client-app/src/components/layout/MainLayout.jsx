@@ -26,6 +26,7 @@ const items = [
   getItem("Customer", "customer", <TeamOutlined />),
   getItem("Employee", "employee", <TeamOutlined />),
   getItem("POS", "pos", <ShopOutlined />),
+  getItem("Invoice", "invoice", <ShopOutlined />),
   getItem("Product", "Product", <ProductOutlined />, [
     getItem("Product", "product", <ProductOutlined />),
     getItem("Product-stock", "product-stock"),
