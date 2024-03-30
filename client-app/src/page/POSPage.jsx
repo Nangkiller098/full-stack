@@ -134,6 +134,7 @@ const POSPage = () => {
       TotalPaid: item.PaidAmount,
       Product: list,
     };
+
     const res = await request("pos/checkout", "post", param);
     if (res) {
       if (res.message) {
@@ -160,19 +161,6 @@ const POSPage = () => {
     filterRef.current.txt_search = e;
     getList();
   };
-
-  // const onSelectCategory = (value) => {
-  //   filterRef.current.category_id = value;
-  //   getList();
-  // };
-
-  // const onCloseModal = () => {
-  //   formCat.resetFields();
-  //   formCat.setFieldsValue({
-  //     Status: "1",
-  //   });
-  //   setOpen(false);
-  // };
 
   return (
     <MainPage loading={loading}>
@@ -338,7 +326,7 @@ const POSPage = () => {
 
             <Form.Item
               label="Payment Method"
-              name={"PaymentMehodId"}
+              name={"PaymentMethodId"}
               rules={[
                 {
                   required: true,
@@ -394,84 +382,6 @@ const POSPage = () => {
           </Form>
         </Col>
       </Row>
-
-      {/* <Modal
-        forceRender
-        title={
-          formCat.getFieldValue("Id") == null ? "New product" : "Update product"
-        }
-        open={open}
-        onCancel={tru}
-        footer={null}
-        closable={false}
-        allowClear
-      >
-        <Form form={formCat} layout="vertical" onFinish={onFinish}>
-          <Row gutter={5}>
-            <Col span={12}>
-              <Form.Item
-                label="Name"
-                name={"Name"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Product Name!",
-                  },
-                ]}
-              >
-                <Input placeholder="Name" />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item
-                label="Description"
-                name={"Description"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Description!",
-                  },
-                ]}
-              >
-                <Input placeholder="Description" />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={5}>
-            <Col span={12}>
-              <Form.Item
-                label="Qty"
-                name={"Qty"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please fil in Qty!",
-                  },
-                ]}
-              >
-                <InputNumber style={{ width: "100%" }} placeholder="Qty" />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              {" "}
-              <Form.Item
-                label="Price"
-                name={"Price"}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input Price!",
-                  },
-                ]}
-              >
-                <InputNumber placeholder="Price" style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal> */}
     </MainPage>
   );
 };

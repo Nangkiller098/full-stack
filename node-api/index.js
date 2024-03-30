@@ -41,6 +41,9 @@ supplier(app);
 const pos = require("./src/route/pos.route");
 pos(app);
 
+const invoice = require("./src/route/invoice.route");
+invoice(app);
+
 const port = 8081;
 app.listen(port, () => {
   console.log("http://localhost:" + port);

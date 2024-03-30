@@ -88,12 +88,14 @@ const checkout = async (req, res) => {
     var TotalAmount = 0;
     data.map((item, index) => {
       var QtyOrderTmp = 0;
+
+      //override
       Product.map((item1, index1) => {
         if (item.Id == item1.Id) {
           QtyOrderTmp = Number(item1.QtyOrder);
           Product[index].Price = Number(item.Price);
           Product[index].QtyOrder = Number(item1.QtyOrder);
-          Product[index].Discount = Number(item.Discount); 
+          Product[index].Discount = Number(item.Discount);
         }
       });
 
@@ -160,6 +162,7 @@ const checkout = async (req, res) => {
     res.json({
       message: "Order Success",
     });
+    console.log(res.json());
   } catch (err) {
     await con.rollback();
     logError("pos.checkout", err, res);

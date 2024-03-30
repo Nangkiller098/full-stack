@@ -1,26 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { request } from "../config/request";
-import {
-  Table,
-  Button,
-  Space,
-  Modal,
-  Input,
-  Form,
-  Select,
-  message,
-  Tag,
-  DatePicker,
-} from "antd";
+import { Table, Space, Input, Form, Select, Button } from "antd";
 import { formartDateClient } from "../config/helper";
 import MainPage from "../components/page/MainPage";
-import dayjs from "dayjs";
 
 const InvoicePage = () => {
   const [list, setList] = useState([]);
-  const [role, setRole] = useState([]);
   const [loading, setLoading] = useState(false);
   //   const [open, setOpen] = useState(false);
+  const [invoiceDetails, setInvoiceDetails] = useState([]);
   const [formCat] = Form.useForm();
 
   useEffect(() => {
@@ -43,60 +31,12 @@ const InvoicePage = () => {
       status: filterRef.current.status,
       role_id: filterRef.current.role_id,
     };
-    const res = await request("employee/getlist", "get", param);
+    const res = await request("invoice", "get", param);
     setLoading(false);
     if (res) {
       setList(res.list);
-      setRole(res.role);
     }
   };
-  const onClickBtnEdit = (item) => {
-    formCat.setFieldsValue({
-      ...item,
-      Dob: dayjs(item.Dob),
-      Gender: item.Gender + "",
-      Status: item.Status + "",
-      RoleId: item.RoleId,
-    });
-    // setOpen(true);
-  };
-  const onClickBtnDelete = async (item) => {
-    Modal.confirm({
-      title: "Delete",
-      content: "Are you sure you want to delete ?",
-      okText: "Yes",
-      cancelText: "No",
-      okType: "danger",
-      centered: true,
-      onOk: async () => {
-        var data = {
-          Id: item.Id,
-        };
-        const res = await request("employee/delete", "delete", data);
-        if (res) {
-          message.success(res.message);
-          getList();
-        }
-      },
-    });
-  };
-  //   const onFinish = async (item) => {
-  //     var Id = formCat.getFieldValue("Id");
-  //     var data = {
-  //       ...item,
-  //       Id: Id,
-  //       Dob: formartDateServer(item.Dob),
-  //       CategoryId: 1,
-  //     };
-  //     var method = Id == null ? "post" : "put";
-  //     const url = Id == null ? "employee/create" : "employee/update";
-  //     const res = await request(url, method, data);
-  //     if (res) {
-  //       message.success(res.message);
-  //       getList();
-  //       onCloseModal();
-  //     }
-  //   };
 
   const onTextSearch = (e) => {
     filterRef.current.txt_search = e.target;
@@ -111,18 +51,17 @@ const InvoicePage = () => {
     getList();
   };
 
-  const onSelectRole = (value) => {
-    filterRef.current.role_id = value;
-    getList();
+  const onViewDetails = (id) => {
+    setLoading(true);
+    var param = {
+      Id: id,
+    };
+    const res = request("invoice_details", "get", param);
+    setLoading(false);
+    if (res) {
+      setInvoiceDetails(res.list);
+    }
   };
-
-  //   const onCloseModal = () => {
-  //     formCat.resetFields();
-  //     formCat.setFieldsValue({
-  //       Status: "1",
-  //     });
-  //     setOpen(false);
-  //   };
 
   return (
     <MainPage loading={loading}>
@@ -150,7 +89,7 @@ const InvoicePage = () => {
             <Select.Option value="1">Active</Select.Option>
             <Select.Option value="0">InActive</Select.Option>
           </Select>
-          <Select
+          {/* <Select
             onSelect={onSelectRole}
             placeholder="Select Role"
             showSearch
@@ -165,9 +104,7 @@ const InvoicePage = () => {
                 {item.Name}
               </Select.Option>
             ))}
-          </Select>
-          <DatePicker />
-          <DatePicker />
+          </Select> */}
         </Space>
       </div>
       <Table
@@ -186,48 +123,44 @@ const InvoicePage = () => {
             render: (value, item, index) => index + 1,
           },
           {
-            key: "Firstname",
-            title: "Firstname",
-            dataIndex: "Firstname",
+            key: "Id",
+            title: "Id",
+            dataIndex: "Id",
           },
           {
-            key: "Lastname",
-            title: "Lastname",
-            dataIndex: "Lastname",
+            key: "CustomerName",
+            title: "CustomerName",
+            dataIndex: "CustomerName",
           },
           {
-            key: "Gender",
-            title: "Gender",
-            dataIndex: "Gender",
-            render: (value) => (value == 1 ? "Male" : "Female"),
+            key: "EmployeeName",
+            title: "EmployeeName",
+            dataIndex: "EmployeeName",
           },
           {
-            key: "Dob",
-            title: "Dob",
-            dataIndex: "Dob",
-            render: (value) => formartDateClient(value),
+            key: "TotalQty",
+            title: "TotalQty",
+            dataIndex: "TotalQty",
           },
           {
-            key: "Tel",
-            title: "Tel",
-            dataIndex: "Tel",
+            key: "TotalAmount",
+            title: "TotalAmount",
+            dataIndex: "TotalAmount",
           },
           {
-            key: "RoleId",
-            title: "Role",
-            dataIndex: "RoleName",
+            key: "TotalPaid",
+            title: "TotalPaid",
+            dataIndex: "TotalPaid",
           },
-
           {
-            key: "Status",
-            title: "Status",
-            dataIndex: "Status",
-            render: (value) =>
-              value == 1 ? (
-                <Tag color="green">Actived</Tag>
-              ) : (
-                <Tag color="red">InActived</Tag>
-              ),
+            key: "PaymentMethod",
+            title: "PaymentMethod",
+            dataIndex: "PaymentMethod",
+          },
+          {
+            key: "OrderStatus",
+            title: "OrderStatus",
+            dataIndex: "OrderStatus",
           },
           {
             key: "CreateAt",
@@ -236,23 +169,16 @@ const InvoicePage = () => {
             render: (value) => formartDateClient(value),
           },
           {
-            key: "Action",
-            title: "Action",
-            dataIndex: "Status",
-            render: (value, item) => (
-              <Space>
-                <Button onClick={() => onClickBtnEdit(item)} type="primary">
-                  Edit
+            key: "Item Details",
+            title: "Item Details",
+            dataIndex: "Item Details",
+            render: (value) => {
+              return (
+                <Button onClick={() => onViewDetails(value)} type="link">
+                  Item Details
                 </Button>
-                <Button
-                  onClick={() => onClickBtnDelete(item)}
-                  type="primary"
-                  danger
-                >
-                  Delete
-                </Button>
-              </Space>
-            ),
+              );
+            },
           },
         ]}
       />

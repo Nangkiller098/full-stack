@@ -158,6 +158,7 @@ const EmployeePage = () => {
             showSearch
             optionFilterProp="label"
             defaultValue={"All"}
+            className=" w-28 text-center"
           >
             <Select.Option label="All" value="All">
               All
