@@ -1,13 +1,24 @@
 import { useEffect, useState, useRef } from "react";
 import { request } from "../config/request";
-import { Table, Space, Input, Form, Select, Button } from "antd";
-import { formartDateClient } from "../config/helper";
+import {
+  Table,
+  Space,
+  Input,
+  Form,
+  Select,
+  Button,
+  Modal,
+  Row,
+  Col,
+  Image,
+} from "antd";
+import { Config, formartDateClient } from "../config/helper";
 import MainPage from "../components/page/MainPage";
 
 const InvoicePage = () => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
-  //   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState([]);
   const [formCat] = Form.useForm();
 
@@ -51,12 +62,10 @@ const InvoicePage = () => {
     getList();
   };
 
-  const onViewDetails = (id) => {
+  const onViewDetails = async (Id) => {
     setLoading(true);
-    var param = {
-      Id: id,
-    };
-    const res = request("invoice_details", "get", param);
+    setOpen(true);
+    const res = await request("invoice_details/ " + Id, "get", {});
     setLoading(false);
     if (res) {
       setInvoiceDetails(res.list);
@@ -171,7 +180,7 @@ const InvoicePage = () => {
           {
             key: "Item Details",
             title: "Item Details",
-            dataIndex: "Item Details",
+            dataIndex: "Id",
             render: (value) => {
               return (
                 <Button onClick={() => onViewDetails(value)} type="link">
@@ -182,6 +191,30 @@ const InvoicePage = () => {
           },
         ]}
       />
+      <Modal open={open} onCancel={() => setOpen(false)}>
+        {invoiceDetails.map((item, index) => {
+          return (
+            <Row key={index}>
+              <Col span={12}>
+                <Row>
+                  <Col>
+                    <Image width={120} src={Config.image_path + item.Image} />
+                  </Col>
+                  <Col>
+                    <div>{item.Name}</div>
+                    <div>{item.Description}</div>
+                  </Col>
+                </Row>
+              </Col>
+              <Col span={12}>
+                <div>{item.Price}</div>
+                <div>{item.Qty}</div>
+                <div>{item.Discount}</div>
+              </Col>
+            </Row>
+          );
+        })}
+      </Modal>
     </MainPage>
   );
 };

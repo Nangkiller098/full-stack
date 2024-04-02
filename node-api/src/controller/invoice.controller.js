@@ -33,5 +33,14 @@ const getList = async (req, res) => {
     logError("invoice.getList", error, res);
   }
 };
-const invoice_details = () => {};
+const invoice_details = async (req, res) => {
+  var Id = req.params.Id;
+  var sql = "";
+  sql +=
+    "SELECT ivd.Id, ivd.InvoiceId ,ivd.Qty,ivd.Price,ivd.Discount,p.Name,p.Image FROM `invoice_details` ivd INNER JOIN product p on(ivd.ProductId = p.Id) WHERE ivd.InvoiceId=:Id;";
+  const [list] = await db.query(sql, { Id: Id });
+  res.json({
+    list: list,
+  });
+};
 module.exports = { getList, invoice_details };
