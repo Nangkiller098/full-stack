@@ -1,6 +1,9 @@
 const db = require("../config/db"); //import db connection funct
 const { logError, validation } = require("../config/helper");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } = require("../config/token_key");
+
 const setPassword = async (req, res) => {
   try {
     var { Tel, Password, ConfirmPassword } = req.body;
@@ -56,16 +59,22 @@ const login = async (req, res) => {
     }
     var passwordFromDb = user[0].Password; //o302upowu4ilj;lfkja3irjoe
 
-    var isCorrectPassword = await bcrypt.compareSync(Password, passwordFromDb);
+    var isCorrectPassword = bcrypt.compareSync(Password, passwordFromDb);
     if (isCorrectPassword) {
       delete user[0].Password; // remove column password
+      var access_token = jwt.sign({ data: user[0] }, ACCESS_TOKEN_KEY, {
+        expiresIn: "20h",
+      });
+      var refresh_token = jwt.sign({ data: user[0] }, REFRESH_TOKEN_KEY);
       res.json({
         message: "Login success",
         user: user[0],
+        access_token: access_token,
+        refresh_token: refresh_token,
       });
     } else {
       res.json({
-        message: "Inccectt Password!",
+        message: "Incorrect Password!",
         error: true,
       });
     }
@@ -73,6 +82,37 @@ const login = async (req, res) => {
     logError("employee.login", err, res);
   }
 };
+
+const CheckToken = () => {
+  // call this function in middleware
+  return (req, res, next) => {
+    var authorization = req.headers.authorization; // token from client
+    var token_from_client = null;
+    if (authorization != null && authorization != "") {
+      token_from_client = authorization.split(" "); // authorization : "Bearer lkjsljrl;kjsiejr;lqjl;ksjdfakljs;ljl;r"
+      token_from_client = token_from_client[1]; // get only access_token
+    }
+    if (token_from_client == null) {
+      res.status(401).send({
+        message: "Unauthorized",
+      });
+    } else {
+      jwt.verify(token_from_client, ACCESS_TOKEN_KEY, (error, result) => {
+        if (error) {
+          res.status(401).send({
+            message: "Unauthorized",
+            error: error,
+          });
+        } else {
+          req.user = result.data; // write user property
+          req.user_id = result.data.Id; // write user property
+          next();
+        }
+      });
+    }
+  };
+};
+
 const getlist = async (req, res) => {
   try {
     var { txt_search, status, role_id } = req.query;
@@ -205,4 +245,5 @@ module.exports = {
   getOne,
   setPassword,
   login,
+  CheckToken,
 };

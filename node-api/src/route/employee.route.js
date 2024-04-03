@@ -1,6 +1,7 @@
 const controller = require("../controller/employee.controller");
+const { CheckToken } = require("../controller/employee.controller");
 const employee = (app) => {
-  app.get("/api/employee/getlist", controller.getlist);
+  app.get("/api/employee/getlist", CheckToken(), controller.getlist);
   app.get("/api/employee/getone", controller.getOne);
   app.post("/api/employee/create", controller.create);
   app.post("/api/employee/setPassword", controller.setPassword);

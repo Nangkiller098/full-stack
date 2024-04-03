@@ -1,0 +1,2 @@
+[2024-04-03 17:39:00]  Error: "expiresIn" should be a number of seconds or string representing a timespan eg: "1d", "20h", 60
+

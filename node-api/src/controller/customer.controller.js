@@ -20,6 +20,7 @@ const getlist = async (req, res) => {
     const [list] = await db.query(sql, param);
     res.json({
       list: list,
+      user_id: req.user_id,
     });
   } catch (err) {
     console.log(sql);
@@ -54,7 +55,7 @@ const create = async (req, res) => {
       Email: req.body.Email,
       Address: req.body.Address,
       Status: req.body.Status,
-      CreateBy: req.body.CreateBy,
+      CreateBy: req.user.Id,
       UpdateBy: req.body.UpdateBy,
     };
     const [data] = await db.query(sql, param);
