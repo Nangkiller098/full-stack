@@ -20,10 +20,9 @@ const getlist = async (req, res) => {
     const [list] = await db.query(sql, param);
     res.json({
       list: list,
-      user_id: req.user_id,
+      user_id: req.user,
     });
   } catch (err) {
-    console.log(sql);
     logError("customer.getlist", err, res);
   }
 };
@@ -45,7 +44,7 @@ const getById = async (req, res) => {
 const create = async (req, res) => {
   try {
     var sql =
-      "INSERT INTO customer  (Firstname, Lastname, Gender, Dob, Tel, Email, Address, Status, CreateBy, UpdateBy) VALUES (:Firstname, :Lastname, :Gender, :Dob, :Tel, :Email, :Status, :Address, :CreateBy ,:UpdateBy)";
+      "INSERT INTO customer  (Firstname, Lastname, Gender, Dob, Tel, Email, Address, Status, CreateBy, UpdateBy) VALUES (:Firstname, :Lastname, :Gender, :Dob, :Tel, :Email,:Address, :Status,  :CreateBy ,:UpdateBy)";
     var param = {
       Firstname: req.body.Firstname,
       Lastname: req.body.Lastname,
@@ -55,7 +54,7 @@ const create = async (req, res) => {
       Email: req.body.Email,
       Address: req.body.Address,
       Status: req.body.Status,
-      CreateBy: req.user.Id,
+      CreateBy: req.user_id,
       UpdateBy: req.body.UpdateBy,
     };
     const [data] = await db.query(sql, param);
@@ -82,7 +81,7 @@ const update = async (req, res) => {
       Email: req.body.Email,
       Address: req.body.Address,
       Status: req.body.Status,
-      CreateBy: req.body.CreateBy,
+      CreateBy: req.user_id,
       UpdateBy: req.body.UpdateBy,
     };
     const [data] = await db.query(sql, param);

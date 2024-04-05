@@ -27,7 +27,9 @@ const searchProduct = async (req, res) => {
     if (validation(txt_search)) {
       res.json({
         list: [],
+        user_request: req.user,
       });
+      console.log(user_request);
       return;
     }
 
@@ -42,7 +44,7 @@ const searchProduct = async (req, res) => {
       category: category,
     });
   } catch (error) {
-    logError("order_payment_method.searchProduct", error, res);
+    logError("pos.searchProduct", error, res);
   }
 };
 
@@ -115,7 +117,7 @@ const checkout = async (req, res) => {
     var OrderStatusId = TotalPaid < TotalAmount ? 3 : 4;
     var sqlInvoiceParam = {
       CustomerId: CustomerId,
-      EmployeeId: 1,
+      EmployeeId: req.user_id,
       OrderStatusId: OrderStatusId,
       OrderPaymentMethodId: PaymentMethodId,
       TotalQty: TotalQty,

@@ -113,6 +113,43 @@ const CheckToken = () => {
   };
 };
 
+const refresh_token = async (req, res) => {
+  try {
+    var refresh_token = req.body.refresh_token;
+    if (validation(refresh_token)) {
+      res.status(401).send({
+        message: "Unauthorized-Refresh-Token",
+      });
+    } else {
+      jwt.verify(refresh_token, REFRESH_TOKEN_KEY, async (error, result) => {
+        if (error) {
+          res.status(401).send({
+            message: "Unauthorized-Refresh-Token",
+            error: error,
+          });
+        } else {
+          // new access && refresh
+          var access_token = await jwt.sign(
+            { data: result.data },
+            ACCESS_TOKEN_KEY,
+            { expiresIn: "60s" }
+          );
+          var refesh_token = await jwt.sign(
+            { data: result.data },
+            REFRESH_TOKEN_KEY
+          );
+          res.json({
+            access_token: access_token,
+            refesh_token: refesh_token,
+          });
+        }
+      });
+    }
+  } catch (err) {
+    logError("employee.refreshtoken", err, res);
+  }
+};
+
 const getlist = async (req, res) => {
   try {
     var { txt_search, status, role_id } = req.query;
@@ -143,6 +180,7 @@ const getlist = async (req, res) => {
     res.json({
       list: list,
       role: role,
+      user_id: req.user,
     });
   } catch (err) {
     console.log(sql);
@@ -246,4 +284,5 @@ module.exports = {
   setPassword,
   login,
   CheckToken,
+  refresh_token,
 };

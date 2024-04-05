@@ -7,15 +7,6 @@ export const Config = {
   token: "",
 };
 
-export const getUser = () => {
-  var user = localStorage.getItem("profile");
-  if (user != null && user != "") {
-    user = JSON.parse(user);
-    return user;
-  }
-  return null;
-};
-
 export const isEmptyOrNull = (value) => {
   if (
     value === "" ||
@@ -28,14 +19,42 @@ export const isEmptyOrNull = (value) => {
   }
   return false;
 };
+
+export const getUser = () => {
+  var user = localStorage.getItem("profile");
+  if (user != null && user != "") {
+    user = JSON.parse(user);
+    return user;
+  }
+  return null;
+};
+
 export const setUser = (user = {}) => {
   localStorage.setItem("profile", JSON.stringify(user));
   localStorage.setItem("isLogin", "1");
 };
 
+export const setAccessToken = (access_token) => {
+  localStorage.setItem("access_token", access_token);
+};
+
+export const getAccessToken = (access_token) => {
+  return localStorage.getItem("access_token", access_token);
+};
+
+export const setRefreshToken = (refresh_token) => {
+  localStorage.setItem("refresh_token", refresh_token);
+};
+
+export const getRefreshToken = (refresh_token) => {
+  return localStorage.getItem("refresh_token", refresh_token);
+};
+
 export const logout = () => {
   localStorage.setItem("profile", "");
   localStorage.setItem("isLogin", "0");
+  localStorage.setItem("access_token", "");
+  localStorage.setItem("refresh_token", "");
   window.location.href = "login";
 };
 

@@ -1,7 +1,7 @@
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input } from "antd";
 import { request } from "../config/request";
-import { setUser } from "../config/helper";
+import { setAccessToken, setRefreshToken, setUser } from "../config/helper";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -25,6 +25,8 @@ const LoginPage = () => {
       } else {
         // Login success
         setUser(res.user);
+        setAccessToken(res.access_token);
+        setRefreshToken(request.refresh_token);
         navigate("/");
       }
     }

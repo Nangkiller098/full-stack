@@ -117,6 +117,7 @@ const InvoicePage = () => {
         </Space>
       </div>
       <Table
+        forceRender
         rowKey="Id"
         dataSource={list}
         pagination={{
@@ -191,7 +192,7 @@ const InvoicePage = () => {
           },
         ]}
       />
-      <Modal open={open} onCancel={() => setOpen(false)}>
+      <Modal forceRender open={open} onCancel={() => setOpen(false)}>
         {invoiceDetails.map((item, index) => {
           return (
             <Row key={index}>
